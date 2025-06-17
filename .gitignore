@@ -1,0 +1,10 @@
+# Exclure GameData.swift
+Alkool/Model/GameData.swift
+Alkool/Model/GameData/
+
+# Fichiers temporaires
+.DS_Store
+*.xcworkspace
+Pods/
+DerivedData/
+xcuserdata/
