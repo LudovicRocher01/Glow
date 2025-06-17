@@ -13,10 +13,8 @@
 
 ## 📱 Technologies
 
-- Swift 5
-- UIKit
-- Auto Layout
-- Storyboard
+- Swift 5.9  
+- SwiftUI  
 - Xcode 15
 
 ## 🛠️ Configuration
