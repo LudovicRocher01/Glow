@@ -24,6 +24,9 @@ struct GameView: View {
     @State private var remainingTime = 30
     @State private var timer: Timer?
     @State private var showChronoButton = false
+    @State private var currentAnswer: String = ""
+    @State private var shouldRevealAnswer: Bool = false
+
 
     
     var body: some View {
@@ -118,14 +121,23 @@ struct GameView: View {
                     .padding(.horizontal, 40)
 
                 // Bouton Prochaine Question
-                Button(action: nextQuestion) {
-                    Text(currentQuestionIndex == totalQuestions ? "Terminer la partie" : "Prochaine question")
+                Button(action: {
+                    if shouldRevealAnswer {
+                        // Affiche la réponse, puis revient au comportement normal
+                        question = currentAnswer
+                        shouldRevealAnswer = false
+                    } else {
+                        nextQuestion()
+                    }
+                }) {
+                    Text(shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex == totalQuestions ? "Terminer la partie" : "Prochaine question"))
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
                         .background(Color.red)
                         .cornerRadius(12)
                 }
+
                 .padding(.horizontal)
                 .padding(.bottom, 20)
             }
@@ -242,15 +254,28 @@ struct GameView: View {
                 sip = "🥃🥃"
                 question = GameData.Debate.randomElement()!
 
-            case 21...22:
-                theme = "Catégorie 🗂️"
-                sip = "🥃🥃"
-                question = GameData.RoundCategories.randomElement()!
+        case 23...25:
+            theme = "Culture G 📚"
+            sip = "🥃🥃"
+            let raw = GameData.Culture.randomElement() ?? ""
+            let parts = raw.split(separator: "(")
+            question = parts[0].trimmingCharacters(in: .whitespaces)
+            if parts.count > 1 {
+                currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
+                shouldRevealAnswer = true
+            }
 
-            case 23...25:
-                theme = "Culture G 📚"
-                sip = "🥃🥃"
-                question = GameData.Culture.randomElement()!
+        case 26...28:
+            theme = "Vrai ou Faux ✅"
+            sip = "🥃🥃"
+            let raw = GameData.TrueOrFalse.randomElement() ?? ""
+            let parts = raw.split(separator: "(")
+            question = parts[0].trimmingCharacters(in: .whitespaces)
+            if parts.count > 1 {
+                currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
+                shouldRevealAnswer = true
+            }
+
 
             case 26...28:
                 theme = "Vrai ou Faux ✅"
