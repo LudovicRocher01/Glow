@@ -54,9 +54,15 @@ struct WelcomeView: View {
                                 .submitLabel(.done)
                                 .focused($isInputActive)
                                 .onSubmit {
-                                    addPlayer()
-                                    isInputActive = true
+                                    let trimmed = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                    if !trimmed.isEmpty {
+                                        addPlayer()
+                                        isInputActive = true
+                                    } else {
+                                        isInputActive = false
+                                    }
                                 }
+
 
 
                             Spacer()

@@ -83,11 +83,16 @@ struct GameView: View {
 
                 Spacer()
 
-                Text(question)
-                    .font(.custom("Marker Felt", size: 24))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                ScrollView {
+                    Text(question)
+                        .font(.custom("Marker Felt", size: 24))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .padding(.bottom, 10)
+                }
+                .frame(maxHeight: 200)
+
 
                 Spacer()
 
@@ -121,9 +126,13 @@ struct GameView: View {
                 }
 
 
-                ProgressView(value: Double(currentQuestionIndex), total: Double(totalQuestions))
-                    .accentColor(.red)
-                    .padding(.horizontal, 40)
+                ProgressView(
+                    value: Double(min(max(currentQuestionIndex, 0), totalQuestions)),
+                    total: Double(totalQuestions)
+                )
+                .accentColor(.red)
+                .padding(.horizontal, 40)
+
 
                 Button(action: {
                     if shouldRevealAnswer {

@@ -26,86 +26,81 @@ struct SettingsView: View {
     @State private var selectedThemes: Set<String> = Set(UserDefaults.standard.array(forKey: "selectedThemes") as? [String] ?? [])
 
     var body: some View {
-        ZStack {
-            Color(red: 7/255, green: 5/255, blue: 77/255)
-                .ignoresSafeArea()
+        GeometryReader { geometry in
+            let isSmall = geometry.size.height < 700
 
-            VStack(spacing: 20) {
-                HStack {
-                    Button(action: { dismiss() }) {
-                        Text("Retour")
+            ZStack {
+                Color(red: 7/255, green: 5/255, blue: 77/255)
+                    .ignoresSafeArea()
+
+                VStack(spacing: isSmall ? 10 : 20) {
+                    HStack {
+                        Button(action: { dismiss() }) {
+                            Text("Retour")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(Color.red)
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white, lineWidth: 1)
+                                )
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+
+                    Text("Alkool")
+                        .font(.custom("ChalkboardSE-Bold", size: isSmall ? 28 : 36))
+                        .foregroundColor(.white)
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white, lineWidth: 3)
+                        )
+
+                    Text("Veuillez choisir les thèmes\navec lesquels vous voulez jouer :")
+                        .font(.custom("Marker Felt", size: isSmall ? 14 : 18))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 30)
+
+                    LazyVGrid(columns: [GridItem(), GridItem()], spacing: isSmall ? 10 : 15) {
+                        ForEach(themes, id: \.0) { theme in
+                            ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0), isSmall: isSmall)
+                                .onTapGesture {
+                                    toggleSelection(theme.0)
+                                }
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    Spacer()
+
+                    Button(action: {
+                        path.append("numberView")
+                    }) {
+                        Text("Suivant")
+                            .font(.title2)
                             .foregroundColor(.white)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 10)
+                            .padding()
+                            .frame(maxWidth: .infinity)
                             .background(Color.red)
                             .cornerRadius(12)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.white, lineWidth: 1)
+                                    .stroke(Color.white, lineWidth: 2)
                             )
                     }
-                    Spacer()
+                    .padding(.horizontal)
+                    .padding(.bottom, isSmall ? 10 : 20)
                 }
-                .padding(.horizontal)
-
-                Spacer().frame(height: 10)
-
-                Text("Alkool")
-                    .font(.custom("ChalkboardSE-Bold", size: 36))
-                    .foregroundColor(.white)
-                    .padding(.vertical, 2)
-                    .padding(.horizontal, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.white, lineWidth: 3)
-                    )
-                    .padding(.bottom, 12)
-                
-                Text("Veuillez choisir les thèmes\navec lesquels vous voulez jouer :")
-                    .font(.custom("Marker Felt", size: 18))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 30)
-
-
-
-                LazyVGrid(columns: [GridItem(), GridItem()], spacing: 15) {
-                    ForEach(themes, id: \.0) { theme in
-                        ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0))
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                toggleSelection(theme.0)
-                            }
-                    }
-                }
-                .padding(.horizontal)
-
-
-
-                Spacer()
-
-                Button(action: {
-                    path.append("numberView")
-                }) {
-                    Text("Suivant")
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.red)
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white, lineWidth: 2)
-                        )
-                }
-
-                .padding(.horizontal)
-                .padding(.bottom, 20)
+                .padding(.top, isSmall ? 10 : 20)
             }
-            .padding(.top, 20)
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -139,22 +134,24 @@ struct ThemeCell: View {
     let themeName: String
     let iconName: String
     let isSelected: Bool
+    var isSmall: Bool = false
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: isSmall ? 4 : 8) {
             Image(systemName: iconName)
-                .font(.title)
+                .font(isSmall ? .body : .title)
                 .foregroundColor(isSelected ? .green : .white)
             Text(themeName)
-                .font(.custom("Marker Felt", size: 18))
+                .font(.custom("Marker Felt", size: isSmall ? 14 : 18))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
         }
-        .padding()
-        .frame(maxWidth: .infinity, minHeight: 90)
+        .padding(isSmall ? 8 : 12)
+        .frame(maxWidth: .infinity, minHeight: isSmall ? 70 : 90)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .stroke(isSelected ? Color.green : Color.white, lineWidth: 2)
         )
     }
 }
+
