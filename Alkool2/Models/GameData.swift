@@ -2179,7 +2179,6 @@ struct GameData {
         "La calligraphie est l'art de bien écrire à la main. (Vrai)",
         "Les chauves-souris sont des oiseaux. (Faux, ce sont des mammifères)",
         "Les éclairs ne frappent jamais deux fois au même endroit. (Faux, ils peuvent frapper plusieurs fois au même endroit)",
-        "Les papillons goûtent avec leurs pieds. (Vrai)",
         "Les éléphants sont les seuls mammifères incapables de sauter. (Vrai)",
         "Les humains utilisent seulement 10 % de leur cerveau. (Faux, c'est un mythe)",
         "Les caméléons changent de couleur uniquement pour se camoufler. (Faux, ils changent également pour communiquer et réguler leur température)",

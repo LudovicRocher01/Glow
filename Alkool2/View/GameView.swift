@@ -26,8 +26,7 @@ struct GameView: View {
     @State private var showChronoButton = false
     @State private var currentAnswer: String = ""
     @State private var shouldRevealAnswer: Bool = false
-
-
+    @State private var previousPlayer: Player? = nil
     
     var body: some View {
         ZStack {
@@ -36,14 +35,13 @@ struct GameView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Bouton Quitter
                 HStack {
                     Button("Quitter") {
                         showQuitAlert = true
                     }
                     .alert("Quitter la partie", isPresented: $showQuitAlert) {
                         Button("Oui", role: .destructive) {
-                            path.removeLast(path.count)
+                            path = NavigationPath()
                         }
                         Button("Non", role: .cancel) { }
                     }
@@ -54,57 +52,65 @@ struct GameView: View {
                     .padding(.vertical, 10)
                     .background(Color.red)
                     .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white, lineWidth: 1)
+                    )
                     Spacer()
                 }
                 .padding(.horizontal)
                 .padding(.top)
                 
-                // Titre Alkool
                 Text("Alkool")
-                    .font(.custom("ChalkboardSE-Bold", size: 34))
+                    .font(.custom("ChalkboardSE-Bold", size: 36))
                     .foregroundColor(.white)
-                    .padding(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white, lineWidth: 2)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white, lineWidth: 3)
                     )
+                    .padding(.bottom, 12)
 
-                Text("Nombre de thèmes sélectionnés : \(selectedThemes.count)")
-                    .foregroundColor(.white)
-
-                // Thème
                 Text(theme)
+                    .font(.custom("Marker Felt", size: 30))
                     .foregroundColor(.white)
-                    .font(.title2)
                     .bold()
                 
-                // Nombre de gorgées
                 Text(sip)
+                    .font(.custom("Marker Felt", size: 30))
                     .foregroundColor(.white)
-                    .font(.headline)
 
                 Spacer()
 
-                // Question
                 Text(question)
+                    .font(.custom("Marker Felt", size: 24))
                     .foregroundColor(.white)
-                    .font(.title3)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
 
                 Spacer()
 
-                // Chrono
                 if showTimer {
-                    Text("\(remainingTime)")
-                        .font(.largeTitle)
-                        .foregroundColor(remainingTime <= 5 ? .red : .white)
-                        .padding()
-                        .overlay(
-                            Circle().stroke(Color.white, lineWidth: 2)
-                                .frame(width: 80, height: 80)
-                        )
-                } else if showChronoButton {
+                    if remainingTime > 0 {
+                        Text("\(remainingTime)")
+                            .font(.system(size: remainingTime <= 5 ? 50 : 40, weight: .bold))
+                            .scaleEffect(remainingTime <= 5 ? 1.2 : 1.0)
+                            .foregroundColor(remainingTime <= 5 ? .red : .white)
+                            .padding()
+                            .animation(.easeInOut(duration: 0.3), value: remainingTime)
+                            .overlay(
+                                Circle().stroke(Color.white, lineWidth: 2)
+                                    .frame(width: 80, height: 80)
+                            )
+                    } else {
+                        Text("Temps écoulé")
+                            .font(.title2)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+                }
+                else if showChronoButton {
                     Button("Chrono") {
                         startTimer()
                     }
@@ -115,15 +121,12 @@ struct GameView: View {
                 }
 
 
-                // Progression
                 ProgressView(value: Double(currentQuestionIndex), total: Double(totalQuestions))
                     .accentColor(.red)
                     .padding(.horizontal, 40)
 
-                // Bouton Prochaine Question
                 Button(action: {
                     if shouldRevealAnswer {
-                        // Affiche la réponse, puis revient au comportement normal
                         question = currentAnswer
                         shouldRevealAnswer = false
                     } else {
@@ -136,6 +139,10 @@ struct GameView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color.red)
                         .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white, lineWidth: 2)
+                        )
                 }
 
                 .padding(.horizontal)
@@ -185,12 +192,14 @@ struct GameView: View {
         return themeList
     }
 
-    // Logique basique pour les questions
     private func generateNewChallenge() {
         timer?.invalidate()
         showTimer = false
         remainingTime = 30
         showChronoButton = false
+        shouldRevealAnswer = false
+        currentAnswer = ""
+
 
         guard !selectedThemes.isEmpty else {
             theme = "Aucun thème sélectionné"
@@ -199,102 +208,129 @@ struct GameView: View {
             return
         }
 
-        // Sélection du thème aléatoire parmi les disponibles
         let themeType = getAvailableThemeTypes().randomElement()!
 
+        var randomPlayer: Player
+        repeat {
+            randomPlayer = players.randomElement()!
+        } while players.count > 1 && randomPlayer.name == previousPlayer?.name
+        previousPlayer = randomPlayer
+
+        var secondPlayer: Player? = nil
+        var message = ""
+
         switch themeType {
-            case 0...2:
-                theme = "Catégorie 📂"
-                sip = "10 🥃 max"
-                question = "Tu as 30 secondes pour citer des éléments de la catégorie choisie."
-                showChronoButton = true
+        case 0...2:
+            let category = GameData.categories.randomElement() ?? "une catégorie"
+            theme = "Catégorie 📂"
+            sip = "10 🥃 max"
+            message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer une gorgée. Si tu te trompes, tu bois."
+            showChronoButton = true
 
-            case 3...5:
-                theme = "Défi 🎯"
-                sip = "🥃🥃🥃"
-                question = GameData.challenges.randomElement()!
+        case 3...5:
+            let challenge = GameData.challenges.randomElement() ?? ""
+            theme = "Défi 🎯"
+            sip = "🥃🥃🥃"
+            message = "\(randomPlayer.name), \(challenge)"
 
-            case 6...8:
-                theme = "Je n'ai jamais 🙈"
-                sip = "🥃🥃"
-                question = GameData.NeverHave.randomElement()!
+        case 6...8:
+            let never = GameData.NeverHave.randomElement() ?? ""
+            theme = "Je n'ai jamais 🙈"
+            sip = "🥃🥃"
+            message = never
 
-            case 9...11:
-                theme = "Qui pourrait 🤔"
-                sip = "🥃🥃"
-                question = GameData.Who.randomElement()!
+        case 9...11:
+            let who = GameData.Who.randomElement() ?? ""
+            theme = "Qui pourrait 🤔"
+            sip = "🥃🥃"
+            message = "\(who) ?"
 
-            case 12...13:
-                theme = "Action 🎬"
-                sip = "🥃?"
-                question = GameData.OneUnluck.randomElement()!
+        case 12...13:
+            let action = GameData.OneUnluck.randomElement() ?? ""
+            theme = "Action 🎬"
+            sip = "🥃?"
+            message = "\(randomPlayer.name), \(action)"
 
-            case 14...15:
-                theme = "Action Groupe 🤹"
-                sip = "🥃?"
-                question = GameData.Unluck.randomElement()!
+        case 14...15:
+            let group = GameData.Unluck.randomElement() ?? ""
+            theme = "Action Groupe 🤹"
+            sip = "🥃?"
+            message = group
 
-            case 16:
-                theme = "Versus ⚔️"
-                sip = "🥃🥃🥃"
-                question = GameData.Versus.randomElement()!
+        case 16:
+            secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
+            let versus = GameData.Versus.randomElement() ?? ""
+            theme = "Versus ⚔️"
+            sip = "🥃🥃🥃"
+            if let sp = secondPlayer {
+                message = "\(randomPlayer.name) et \(sp.name), \(versus)"
+            }
 
-            case 17:
-                theme = "Jeu 🎲"
-                sip = "🥃🥃🥃"
-                question = GameData.Game.randomElement()!
+        case 17:
+            let game = GameData.Game.randomElement() ?? ""
+            theme = "Jeu 🎲"
+            sip = "🥃🥃🥃"
+            message = "\(game). \(randomPlayer.name), à toi l'honneur !"
 
-            case 18:
-                theme = "Malédiction ☠️"
-                sip = "🥃 par erreur"
-                question = GameData.Malediction.randomElement()!
+        case 18:
+            let curse = GameData.Malediction.randomElement() ?? ""
+            theme = "Malédiction ☠️"
+            sip = "🥃 par erreur"
+            message = "\(randomPlayer.name), jusqu'à la fin de la partie : \(curse)"
 
-            case 19...20:
-                theme = "Débat 🗣️"
-                sip = "🥃🥃"
-                question = GameData.Debate.randomElement()!
+        case 19...20:
+            let debate = GameData.Debate.randomElement() ?? ""
+            theme = "Débat 🗣️"
+            sip = "🥃🥃"
+            message = debate
+
+        case 21...22:
+            let round = GameData.RoundCategories.randomElement() ?? "une catégorie"
+            theme = "Catégorie 🗂️"
+            sip = "🥃🥃"
+            message = "Chacun son tour, citez \(round). Celui qui se trompe ou hésite trop boit. \(randomPlayer.name), tu commences !"
 
         case 23...25:
-            theme = "Culture G 📚"
-            sip = "🥃🥃"
             let raw = GameData.Culture.randomElement() ?? ""
             let parts = raw.split(separator: "(")
-            question = parts[0].trimmingCharacters(in: .whitespaces)
+            theme = "Culture G 📚"
+            sip = "🥃🥃"
+            message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
                 shouldRevealAnswer = true
             }
 
         case 26...28:
-            theme = "Vrai ou Faux ✅"
-            sip = "🥃🥃"
             let raw = GameData.TrueOrFalse.randomElement() ?? ""
             let parts = raw.split(separator: "(")
-            question = parts[0].trimmingCharacters(in: .whitespaces)
+            theme = "Vrai ou Faux ✅"
+            sip = "🥃🥃"
+            message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
                 shouldRevealAnswer = true
             }
 
+        case 29:
+            secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
+            let confidence = GameData.Confidence.randomElement() ?? ""
+            theme = "Confidences 🕵️"
+            sip = "🥃🥃"
+            if let sp = secondPlayer {
+                message = "\(randomPlayer.name), concernant \(sp.name) : \(confidence)"
+            }
 
-            case 26...28:
-                theme = "Vrai ou Faux ✅"
-                sip = "🥃🥃"
-                question = GameData.TrueOrFalse.randomElement()!
-
-            case 29:
-                theme = "Confidences 🕵️"
-                sip = "🥃🥃"
-                question = GameData.Confidence.randomElement()!
-
-            default:
-                theme = "Erreur"
-                sip = ""
-                question = "Une erreur inattendue est survenue."
+        default:
+            theme = "Erreur"
+            sip = ""
+            message = "Une erreur est survenue."
         }
+
+        question = message
     }
 
-    // Gestion des questions suivantes
+
     private func nextQuestion() {
         timer?.invalidate()
         showTimer = false
@@ -304,11 +340,10 @@ struct GameView: View {
             currentQuestionIndex += 1
             generateNewChallenge()
         } else {
-            showQuitAlert = true // Fin du jeu, demande de retour menu
+            showQuitAlert = true
         }
     }
 
-    // Gestion du chrono
     private func startTimer() {
         showTimer = true
         remainingTime = 30

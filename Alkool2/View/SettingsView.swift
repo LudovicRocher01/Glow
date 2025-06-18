@@ -31,7 +31,6 @@ struct SettingsView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
-                // Bouton Retour en haut à gauche
                 HStack {
                     Button(action: { dismiss() }) {
                         Text("Retour")
@@ -40,6 +39,10 @@ struct SettingsView: View {
                             .padding(.vertical, 10)
                             .background(Color.red)
                             .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white, lineWidth: 1)
+                            )
                     }
                     Spacer()
                 }
@@ -47,27 +50,31 @@ struct SettingsView: View {
 
                 Spacer().frame(height: 10)
 
-                // Titre Alkool centré
                 Text("Alkool")
-                    .font(.custom("ChalkboardSE-Bold", size: 34))
+                    .font(.custom("ChalkboardSE-Bold", size: 36))
                     .foregroundColor(.white)
-                    .padding(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white, lineWidth: 2)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white, lineWidth: 3)
                     )
-
-                // Label d'instructions
-                Text("Veuillez choisir les thèmes avec lesquels vous voulez jouer :")
+                    .padding(.bottom, 12)
+                
+                Text("Veuillez choisir les thèmes\navec lesquels vous voulez jouer :")
+                    .font(.custom("Marker Felt", size: 18))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 30)
 
-                // Grille des thèmes sélectionnables
+
+
                 LazyVGrid(columns: [GridItem(), GridItem()], spacing: 15) {
                     ForEach(themes, id: \.0) { theme in
                         ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0))
-                            .contentShape(Rectangle()) // permet que tout le rectangle soit cliquable
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 toggleSelection(theme.0)
                             }
@@ -79,7 +86,6 @@ struct SettingsView: View {
 
                 Spacer()
 
-                // Bouton Suivant en bas
                 Button(action: {
                     path.append("numberView")
                 }) {
@@ -90,6 +96,10 @@ struct SettingsView: View {
                         .frame(maxWidth: .infinity)
                         .background(Color.red)
                         .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color.white, lineWidth: 2)
+                        )
                 }
 
                 .padding(.horizontal)
@@ -103,7 +113,6 @@ struct SettingsView: View {
         }
     }
 
-    // Gestion des sélections
     private func toggleSelection(_ theme: String) {
         if selectedThemes.contains(theme) {
             selectedThemes.remove(theme)
@@ -126,7 +135,6 @@ struct SettingsView: View {
     }
 }
 
-// Cellule de thème personnalisée
 struct ThemeCell: View {
     let themeName: String
     let iconName: String
@@ -138,7 +146,7 @@ struct ThemeCell: View {
                 .font(.title)
                 .foregroundColor(isSelected ? .green : .white)
             Text(themeName)
-                .font(.headline)
+                .font(.custom("Marker Felt", size: 18))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
         }

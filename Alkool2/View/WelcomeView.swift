@@ -12,72 +12,84 @@ struct WelcomeView: View {
     @State private var players: [Player] = Player.loadFromUserDefaults()
     @State private var showDisclaimer = !UserDefaults.standard.bool(forKey: "hasSeenDisclaimer")
     @State private var path = NavigationPath()
+    @FocusState private var isInputActive: Bool
+
 
     var body: some View {
         NavigationStack(path: $path) {
             ZStack(alignment: .topTrailing) {
-                // Fond
                 Color(red: 7/255, green: 5/255, blue: 77/255)
                     .ignoresSafeArea()
 
                 VStack(spacing: 20) {
                     Spacer().frame(height: 30)
 
-                    // Titre
                     Text("Alkool")
-                        .font(.custom("ChalkboardSE-Bold", size: 34))
+                        .font(.custom("ChalkboardSE-Bold", size: 36))
                         .foregroundColor(.white)
-                        .padding(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white, lineWidth: 2)
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white, lineWidth: 3)
                         )
+                        .padding(.bottom, 12)
 
-                    // Label
                     Text("Ajoutez un joueur :")
+                        .font(.custom("Marker Felt", size: 20))
                         .foregroundColor(.white)
 
-                    // Champ texte + bouton "+"
-                    HStack(spacing: 10) {
-                        TextField("Nom du joueur", text: $playerName)
-                            .textFieldStyle(.roundedBorder)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.red, lineWidth: 2)
+                            .background(Color.red.opacity(0.5))
+                            .cornerRadius(12)
+                            .frame(height: 50)
 
-                        Button(action: addPlayer) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title)
-                                .foregroundColor(.red)
+                        HStack {
+                            TextField("", text: $playerName)
+                                .padding(.leading, 12)
+                                .foregroundColor(.white)
+                                .font(.system(size: 16, weight: .medium))
+                                .submitLabel(.done)
+                                .focused($isInputActive)
+                                .onSubmit {
+                                    addPlayer()
+                                    isInputActive = true
+                                }
+
+
+                            Spacer()
+
+                            Button(action: addPlayer) {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 24, height: 24)
+                                    .foregroundColor(.red)
+                                    .padding(.trailing, 12)
+                            }
                         }
                     }
-                    .padding(.horizontal)
+                    .frame(maxWidth: 300)
+                    .padding(.bottom, 20)
 
-                    // Liste des joueurs
-                    List {
-                        ForEach(players, id: \.id) { player in
-                            HStack {
-                                Text(player.name)
-                                    .font(.headline)
-                                    .foregroundColor(.white)
-                                Spacer()
-                                Button(action: {
+
+
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            ForEach(players, id: \.id) { player in
+                                PlayerRow(player: player) {
                                     removePlayer(player)
-                                }) {
-                                    Text("-")
-                                        .font(.title2)
-                                        .foregroundColor(.red)
                                 }
                             }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color(hex: "#FAEBD7"), lineWidth: 2)
-                            )
-                            .listRowBackground(Color.clear)
                         }
+                        .padding(.horizontal)
                     }
+
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
 
-                    // Bouton Suivant
+
                     Button(action: {
                         path.append("settings")
                     }) {
@@ -88,6 +100,10 @@ struct WelcomeView: View {
                             .frame(maxWidth: .infinity)
                             .background(Color.red)
                             .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white, lineWidth: 2)
+                            )
                     }
 
                     .navigationDestination(for: String.self) { route in
@@ -113,7 +129,6 @@ struct WelcomeView: View {
                 }
                 .padding()
 
-                // Bouton Info
                 NavigationLink(destination: InfoView()) {
                     Image(systemName: "info.circle.fill")
                         .font(.title2)
@@ -133,7 +148,6 @@ struct WelcomeView: View {
         }
     }
 
-    // MARK: - Fonctions
     func addPlayer() {
         let trimmed = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -150,3 +164,26 @@ struct WelcomeView: View {
     
 }
 
+struct PlayerRow: View {
+    let player: Player
+    let onRemove: () -> Void
+
+    var body: some View {
+        HStack {
+            Text(player.name)
+                .font(.custom("Marker Felt", size: 18))
+                .foregroundColor(.white)
+            Spacer()
+            Button(action: onRemove) {
+                Text("-")
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color(hex: "#FAEBD7"), lineWidth: 2)
+        )
+    }
+}

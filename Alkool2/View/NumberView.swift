@@ -22,7 +22,6 @@ struct NumberView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Bouton Retour en haut à gauche
                 HStack {
                     Button(action: { dismiss() }) {
                         Text("Retour")
@@ -31,6 +30,10 @@ struct NumberView: View {
                             .padding(.vertical, 10)
                             .background(Color.red)
                             .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.white, lineWidth: 1)
+                            )
                     }
                     Spacer()
                 }
@@ -39,28 +42,25 @@ struct NumberView: View {
                 
                 Spacer().frame(height: 10)
                 
-                // Titre Alkool centré
                 Text("Alkool")
-                    .font(.custom("ChalkboardSE-Bold", size: 34))
+                    .font(.custom("ChalkboardSE-Bold", size: 36))
                     .foregroundColor(.white)
-                    .padding(12)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white, lineWidth: 2)
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.white, lineWidth: 3)
                     )
-                Text("Nombre de thèmes sélectionnés : \(selectedThemes.count)")
-                    .foregroundColor(.white)
-
-                
+                    .padding(.bottom, 12)
+        
                 Spacer().frame(height: 20)
                 
-                // Texte d'instruction
                 Text("Veuillez choisir un nombre\nde questions")
+                    .font(.custom("Marker Felt", size: 18))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .padding()
                 
-                // Slider avec arrondi par 5
                 Slider(value: Binding(
                     get: { questionCount },
                     set: { newValue in
@@ -71,14 +71,13 @@ struct NumberView: View {
                 .accentColor(.red)
                 .padding(.horizontal, 40)
                 
-                // Affichage du nombre sélectionné
                 Text("Nombre de questions : \(Int(questionCount))")
+                    .font(.custom("Marker Felt", size: 18))
                     .foregroundColor(.white)
                     .padding(.top, 5)
                 
                 Spacer()
                 
-                // Bouton Jouer
                 Button(action: {
                     path.append("gameView")
                 }) {
@@ -93,6 +92,10 @@ struct NumberView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.red)
                     .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.white, lineWidth: 2)
+                    )
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
@@ -101,7 +104,6 @@ struct NumberView: View {
         .navigationBarHidden(true)
     }
     
-    // Sauvegarde automatique dans UserDefaults
     private func saveQuestionCount() {
         UserDefaults.standard.set(Int(questionCount), forKey: "savedQuestionCount")
     }

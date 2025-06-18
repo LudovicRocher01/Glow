@@ -16,7 +16,6 @@ struct InfoView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
-                // Haut : bouton retour + titre
                 VStack(spacing: 12) {
                     HStack {
                         Button(action: {
@@ -28,41 +27,53 @@ struct InfoView: View {
                                 .padding(.vertical, 10)
                                 .background(Color.red)
                                 .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.white, lineWidth: 1)
+                                )
                         }
                         Spacer()
                     }
 
                     Text("Alkool")
-                        .font(.custom("ChalkboardSE-Bold", size: 34))
+                        .font(.custom("ChalkboardSE-Bold", size: 36))
                         .foregroundColor(.white)
-                        .padding(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.white, lineWidth: 2)
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.white, lineWidth: 3)
                         )
+                        .padding(.bottom, 12)
+                        
                 }
                 .padding(.horizontal)
                 .padding(.top)
 
-                // Corps du texte (ajusté pour ne pas dépasser l’écran)
                 VStack(alignment: .leading, spacing: 14) {
                     Text("Bienvenue dans Alkool, le jeu festif qui pimente tes soirées entre amis 🍻")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
                     Text("Règles du jeu :")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
                         .bold()
 
                     Label("Le nombre de verres affiché indique le nombre de gorgées en jeu.", systemImage: "wineglass")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
                     Label("Un joueur peut cumuler deux malédictions. En cas de nouvelle malédiction, il doit en conserver deux maximum. Les autres joueurs choisissent lesquelles.", systemImage: "person.fill.questionmark")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
                     Label("Ce jeu est prévu pour un usage festif et responsable. Chacun est libre de ses choix, aucune action ne doit être forcée.", systemImage: "checkmark.seal.fill")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
                     Label("Buvez avec modération. L'application n'encourage pas la consommation excessive d'alcool.", systemImage: "scalemass")
+                        .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
                 }
                 .font(.callout)
