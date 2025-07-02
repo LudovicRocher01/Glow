@@ -51,7 +51,7 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal)
 
-                    Text("Alkool")
+                    Text("Glou")
                         .font(.custom("ChalkboardSE-Bold", size: isSmall ? 28 : 36))
                         .foregroundColor(.white)
                         .padding(.vertical, 2)
@@ -72,6 +72,7 @@ struct SettingsView: View {
                     LazyVGrid(columns: [GridItem(), GridItem()], spacing: isSmall ? 10 : 15) {
                         ForEach(themes, id: \.0) { theme in
                             ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0), isSmall: isSmall)
+                                .contentShape(Rectangle())
                                 .onTapGesture {
                                     toggleSelection(theme.0)
                                 }

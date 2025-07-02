@@ -42,7 +42,7 @@ struct NumberView: View {
                 
                 Spacer().frame(height: 10)
                 
-                Text("Alkool")
+                Text("Glou")
                     .font(.custom("ChalkboardSE-Bold", size: 36))
                     .foregroundColor(.white)
                     .padding(.vertical, 2)

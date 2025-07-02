@@ -24,7 +24,7 @@ struct WelcomeView: View {
                 VStack(spacing: 20) {
                     Spacer().frame(height: 30)
 
-                    Text("Alkool")
+                    Text("Glou")
                         .font(.custom("ChalkboardSE-Bold", size: 36))
                         .foregroundColor(.white)
                         .padding(.vertical, 2)

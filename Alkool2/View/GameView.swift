@@ -61,7 +61,7 @@ struct GameView: View {
                 .padding(.horizontal)
                 .padding(.top)
                 
-                Text("Alkool")
+                Text("Glou")
                     .font(.custom("ChalkboardSE-Bold", size: 36))
                     .foregroundColor(.white)
                     .padding(.vertical, 2)

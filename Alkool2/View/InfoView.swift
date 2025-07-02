@@ -35,7 +35,7 @@ struct InfoView: View {
                         Spacer()
                     }
 
-                    Text("Alkool")
+                    Text("Glou")
                         .font(.custom("ChalkboardSE-Bold", size: 36))
                         .foregroundColor(.white)
                         .padding(.vertical, 2)
@@ -51,7 +51,7 @@ struct InfoView: View {
                 .padding(.top)
 
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("Bienvenue dans Alkool, le jeu festif qui pimente tes soirées entre amis 🍻")
+                    Text("Bienvenue dans Glou, le jeu festif qui anime vos soirées entre amis !")
                         .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
@@ -60,21 +60,22 @@ struct InfoView: View {
                         .foregroundColor(.white)
                         .bold()
 
-                    Label("Le nombre de verres affiché indique le nombre de gorgées en jeu.", systemImage: "wineglass")
+                    Label("Chaque carte indique une action, un défi ou une consigne à suivre. À vous de jouer !", systemImage: "gamecontroller.fill")
                         .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
-                    Label("Un joueur peut cumuler deux malédictions. En cas de nouvelle malédiction, il doit en conserver deux maximum. Les autres joueurs choisissent lesquelles.", systemImage: "person.fill.questionmark")
+                    Label("Un joueur peut cumuler deux malédictions. En cas de nouvelle, les autres joueurs choisissent lesquelles conserver.", systemImage: "person.fill.questionmark")
                         .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
-                    Label("Ce jeu est prévu pour un usage festif et responsable. Chacun est libre de ses choix, aucune action ne doit être forcée.", systemImage: "checkmark.seal.fill")
+                    Label("Ce jeu est conçu pour un usage amusant, convivial et respectueux. Chacun reste libre de participer à sa façon.", systemImage: "hand.raised.fill")
                         .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
 
-                    Label("Buvez avec modération. L'application n'encourage pas la consommation excessive d'alcool.", systemImage: "scalemass")
+                    Label("L’application n’encourage aucun comportement à risque. Restez à l’écoute de vos limites et de celles des autres.", systemImage: "exclamationmark.triangle.fill")
                         .font(.custom("Marker Felt", size: 18))
                         .foregroundColor(.white)
+
                 }
                 .font(.callout)
                 .padding(.horizontal, 30)
