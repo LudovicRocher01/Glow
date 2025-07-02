@@ -18,7 +18,7 @@ struct NumberView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 7/255, green: 5/255, blue: 77/255)
+            Color.backgroundColor
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
@@ -28,7 +28,7 @@ struct NumberView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 20)
                             .padding(.vertical, 10)
-                            .background(Color.red)
+                            .background(Color.buttonRed)
                             .cornerRadius(12)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
@@ -83,22 +83,23 @@ struct NumberView: View {
                 }) {
                     HStack {
                         Text("Jouer")
-                            .font(.title2)
+                            .font(.system(size: 26, weight: .bold))
                         Image(systemName: "play.fill")
-                            .font(.title2)
+                            .font(.system(size: 26, weight: .bold))
                     }
                     .foregroundColor(.white)
-                    .padding()
+                    .frame(height: 60)
                     .frame(maxWidth: .infinity)
-                    .background(Color.red)
-                    .cornerRadius(12)
+                    .background(Color.buttonRed)
+                    .cornerRadius(18)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 18)
                             .stroke(Color.white, lineWidth: 2)
                     )
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 30)
                 .padding(.bottom, 20)
+
             }
         }
         .navigationBarHidden(true)

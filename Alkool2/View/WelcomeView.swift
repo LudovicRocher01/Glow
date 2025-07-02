@@ -13,12 +13,12 @@ struct WelcomeView: View {
     @State private var showDisclaimer = !UserDefaults.standard.bool(forKey: "hasSeenDisclaimer")
     @State private var path = NavigationPath()
     @FocusState private var isInputActive: Bool
-
+    @State private var showPlayerAlert = false
 
     var body: some View {
         NavigationStack(path: $path) {
             ZStack(alignment: .topTrailing) {
-                Color(red: 7/255, green: 5/255, blue: 77/255)
+                Color.backgroundColor
                     .ignoresSafeArea()
 
                 VStack(spacing: 20) {
@@ -41,8 +41,8 @@ struct WelcomeView: View {
 
                     ZStack {
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.red, lineWidth: 2)
-                            .background(Color.red.opacity(0.5))
+                            .stroke(Color.buttonRed, lineWidth: 2)
+                            .background(Color.buttonRed.opacity(0.6))
                             .cornerRadius(12)
                             .frame(height: 50)
 
@@ -50,7 +50,7 @@ struct WelcomeView: View {
                             TextField("", text: $playerName)
                                 .padding(.leading, 12)
                                 .foregroundColor(.white)
-                                .font(.system(size: 16, weight: .medium))
+                                .font(.custom("Marker Felt", size: 20))
                                 .submitLabel(.done)
                                 .focused($isInputActive)
                                 .onSubmit {
@@ -97,20 +97,33 @@ struct WelcomeView: View {
 
 
                     Button(action: {
-                        path.append("settings")
+                        if players.count < 2 {
+                            showPlayerAlert = true
+                        } else {
+                            path.append("settings")
+                        }
                     }) {
                         Text("Suivant")
-                            .font(.title2)
+                            .font(.system(size: 26, weight: .bold))
                             .foregroundColor(.white)
-                            .padding()
+                            .frame(height: 60)
                             .frame(maxWidth: .infinity)
-                            .background(Color.red)
-                            .cornerRadius(12)
+                            .background(Color.buttonRed)
+                            .cornerRadius(18)
                             .overlay(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 18)
                                     .stroke(Color.white, lineWidth: 2)
                             )
+                            .padding(.horizontal, 30)
                     }
+                    .alert("Attention !", isPresented: $showPlayerAlert) {
+                        Button("OK", role: .cancel) {}
+                    } message: {
+                        Text("Au moins 2 joueurs sont nécessaires pour commencer.")
+                    }
+
+
+
 
                     .navigationDestination(for: String.self) { route in
                         switch route {

@@ -17,6 +17,7 @@ struct GameView: View {
 
     @State private var currentQuestionIndex = 1
     @State private var theme = "Thème"
+    @State private var themeIcon = "questionmark"
     @State private var sip = "Sip"
     @State private var question = "Question ici"
     @State private var showQuitAlert = false
@@ -30,8 +31,7 @@ struct GameView: View {
     
     var body: some View {
         ZStack {
-            
-            Color(red: 7/255, green: 5/255, blue: 77/255)
+            Color.backgroundColor
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
@@ -45,12 +45,10 @@ struct GameView: View {
                         }
                         Button("Non", role: .cancel) { }
                     }
-
-
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(Color.red)
+                    .background(Color.buttonRed)
                     .cornerRadius(12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
@@ -72,10 +70,16 @@ struct GameView: View {
                     )
                     .padding(.bottom, 12)
 
-                Text(theme)
-                    .font(.custom("Marker Felt", size: 30))
-                    .foregroundColor(.white)
-                    .bold()
+                Label {
+                    Text(theme)
+                        .font(.custom("Marker Felt", size: 30))
+                        .bold()
+                } icon: {
+                    Image(systemName: themeIcon)
+                        .font(.system(size: 30))
+                }
+                .foregroundColor(.white)
+
                 
                 Text(sip)
                     .font(.custom("Marker Felt", size: 30))
@@ -121,7 +125,7 @@ struct GameView: View {
                     }
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color.red)
+                    .background(Color.buttonRed)
                     .cornerRadius(12)
                 }
 
@@ -143,24 +147,27 @@ struct GameView: View {
                     }
                 }) {
                     Text(shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex == totalQuestions ? "Terminer la partie" : "Prochaine question"))
+                        .font(.system(size: 26, weight: .bold))
                         .foregroundColor(.white)
-                        .padding()
+                        .frame(height: 60)
                         .frame(maxWidth: .infinity)
-                        .background(Color.red)
-                        .cornerRadius(12)
+                        .background(Color.buttonRed)
+                        .cornerRadius(18)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: 18)
                                 .stroke(Color.white, lineWidth: 2)
                         )
                 }
-
-                .padding(.horizontal)
+                .padding(.horizontal, 30)
                 .padding(.bottom, 20)
+
             }
         }
         .navigationBarHidden(true)
         .alert("Quitter la partie", isPresented: $showQuitAlert) {
-            Button("Oui", role: .destructive) { dismiss() }
+            Button("Oui", role: .destructive) {
+                path = NavigationPath()
+            }
             Button("Non", role: .cancel) { }
         } message: {
             Text("Êtes-vous sûr de vouloir quitter la partie ?")
@@ -231,45 +238,52 @@ struct GameView: View {
         switch themeType {
         case 0...2:
             let category = GameData.categories.randomElement() ?? "une catégorie"
-            theme = "Catégorie 📂"
+            theme = "Catégorie"
+            themeIcon = "folder.fill"
             sip = "10 Zaps max"
             message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer un Zap. Si tu te trompes, c'est toi qui prends."
             showChronoButton = true
 
         case 3...5:
             let challenge = GameData.challenges.randomElement() ?? ""
-            theme = "Défi 🎯"
+            theme = "Défi"
+            themeIcon = "target"
             sip = "3 Zaps"
             message = "\(randomPlayer.name), \(challenge)"
 
         case 6...8:
             let never = GameData.NeverHave.randomElement() ?? ""
-            theme = "Je n'ai jamais 🙈"
+            theme = "Je n'ai jamais"
+            themeIcon = "hand.raised.fill"
             sip = "2 Zaps"
             message = never
 
         case 9...11:
             let who = GameData.Who.randomElement() ?? ""
-            theme = "Qui pourrait 🤔"
+            theme = "Qui pourrait"
+            themeIcon = "person.crop.circle.badge.questionmark"
             sip = "2 Zaps"
             message = "\(who) ?"
 
         case 12...13:
             let action = GameData.OneUnluck.randomElement() ?? ""
-            theme = "Action 🎬"
+            theme = "Action"
+            themeIcon = "figure.run"
             sip = "Zaps?"
             message = "\(randomPlayer.name), \(action)"
 
         case 14...15:
             let group = GameData.Unluck.randomElement() ?? ""
-            theme = "Action Groupe 🤹"
+            theme = "Action Groupe"
+            themeIcon = "person.3.fill"
             sip = "Zaps?"
             message = group
 
         case 16:
             secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
             let versus = GameData.Versus.randomElement() ?? ""
-            theme = "Versus ⚔️"
+            theme = "Versus"
+            themeIcon = "flag.checkered"
             sip = "3 Zaps"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name) et \(sp.name), \(versus)"
@@ -277,32 +291,37 @@ struct GameView: View {
 
         case 17:
             let game = GameData.Game.randomElement() ?? ""
-            theme = "Jeu 🎲"
+            theme = "Jeu"
+            themeIcon = "gamecontroller.fill"
             sip = "3 Zaps"
             message = "\(game). \(randomPlayer.name), à toi l'honneur !"
 
         case 18:
             let curse = GameData.Malediction.randomElement() ?? ""
-            theme = "Malédiction ☠️"
+            theme = "Malédiction"
+            themeIcon = "bolt.trianglebadge.exclamationmark"
             sip = "1 Zap par erreur"
             message = "\(randomPlayer.name), jusqu'à la fin de la partie : \(curse)"
 
         case 19...20:
             let debate = GameData.Debate.randomElement() ?? ""
-            theme = "Débat 🗣️"
+            theme = "Débat"
+            themeIcon = "quote.bubble.fill"
             sip = "2 Zaps"
             message = debate
 
         case 21...22:
             let round = GameData.RoundCategories.randomElement() ?? "une catégorie"
-            theme = "Catégorie 🗂️"
+            theme = "Catégorie"
+            themeIcon = "list.bullet.rectangle"
             sip = "2 Zaps"
             message = "Chacun son tour, citez \(round). Celui qui se trompe ou hésite trop perd. \(randomPlayer.name), tu commences !"
 
         case 23...25:
             let raw = GameData.Culture.randomElement() ?? ""
             let parts = raw.split(separator: "(")
-            theme = "Culture G 📚"
+            theme = "Culture G"
+            themeIcon = "book.closed.fill"
             sip = "2 Zaps"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
@@ -313,7 +332,8 @@ struct GameView: View {
         case 26...28:
             let raw = GameData.TrueOrFalse.randomElement() ?? ""
             let parts = raw.split(separator: "(")
-            theme = "Vrai ou Faux ✅"
+            theme = "Vrai ou Faux"
+            themeIcon = "checkmark.circle"
             sip = "2 Zaps"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
@@ -324,7 +344,8 @@ struct GameView: View {
         case 29:
             secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
             let confidence = GameData.Confidence.randomElement() ?? ""
-            theme = "Confidences 🕵️"
+            theme = "Confidences"
+            themeIcon = "lock.shield"
             sip = "2 Zaps"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name), concernant \(sp.name) : \(confidence)"
@@ -332,6 +353,7 @@ struct GameView: View {
 
         default:
             theme = "Erreur"
+            themeIcon = "xmark.octagon.fill"
             sip = ""
             message = "Une erreur est survenue."
         }

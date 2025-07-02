@@ -12,7 +12,7 @@ struct InfoView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 7/255, green: 5/255, blue: 77/255)
+            Color.backgroundColor
                 .ignoresSafeArea()
 
             VStack(spacing: 20) {
@@ -25,7 +25,7 @@ struct InfoView: View {
                                 .foregroundColor(.white)
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 10)
-                                .background(Color.red)
+                                .background(Color.buttonRed)
                                 .cornerRadius(12)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
