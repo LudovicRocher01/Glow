@@ -232,45 +232,45 @@ struct GameView: View {
         case 0...2:
             let category = GameData.categories.randomElement() ?? "une catégorie"
             theme = "Catégorie 📂"
-            sip = "10 🥃 max"
-            message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer une gorgée. Si tu te trompes, tu bois."
+            sip = "10 Zaps max"
+            message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer un Zap. Si tu te trompes, c'est toi qui prends."
             showChronoButton = true
 
         case 3...5:
             let challenge = GameData.challenges.randomElement() ?? ""
             theme = "Défi 🎯"
-            sip = "🥃🥃🥃"
+            sip = "3 Zaps"
             message = "\(randomPlayer.name), \(challenge)"
 
         case 6...8:
             let never = GameData.NeverHave.randomElement() ?? ""
             theme = "Je n'ai jamais 🙈"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             message = never
 
         case 9...11:
             let who = GameData.Who.randomElement() ?? ""
             theme = "Qui pourrait 🤔"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             message = "\(who) ?"
 
         case 12...13:
             let action = GameData.OneUnluck.randomElement() ?? ""
             theme = "Action 🎬"
-            sip = "🥃?"
+            sip = "Zaps?"
             message = "\(randomPlayer.name), \(action)"
 
         case 14...15:
             let group = GameData.Unluck.randomElement() ?? ""
             theme = "Action Groupe 🤹"
-            sip = "🥃?"
+            sip = "Zaps?"
             message = group
 
         case 16:
             secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
             let versus = GameData.Versus.randomElement() ?? ""
             theme = "Versus ⚔️"
-            sip = "🥃🥃🥃"
+            sip = "3 Zaps"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name) et \(sp.name), \(versus)"
             }
@@ -278,32 +278,32 @@ struct GameView: View {
         case 17:
             let game = GameData.Game.randomElement() ?? ""
             theme = "Jeu 🎲"
-            sip = "🥃🥃🥃"
+            sip = "3 Zaps"
             message = "\(game). \(randomPlayer.name), à toi l'honneur !"
 
         case 18:
             let curse = GameData.Malediction.randomElement() ?? ""
             theme = "Malédiction ☠️"
-            sip = "🥃 par erreur"
+            sip = "1 Zap par erreur"
             message = "\(randomPlayer.name), jusqu'à la fin de la partie : \(curse)"
 
         case 19...20:
             let debate = GameData.Debate.randomElement() ?? ""
             theme = "Débat 🗣️"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             message = debate
 
         case 21...22:
             let round = GameData.RoundCategories.randomElement() ?? "une catégorie"
             theme = "Catégorie 🗂️"
-            sip = "🥃🥃"
-            message = "Chacun son tour, citez \(round). Celui qui se trompe ou hésite trop boit. \(randomPlayer.name), tu commences !"
+            sip = "2 Zaps"
+            message = "Chacun son tour, citez \(round). Celui qui se trompe ou hésite trop perd. \(randomPlayer.name), tu commences !"
 
         case 23...25:
             let raw = GameData.Culture.randomElement() ?? ""
             let parts = raw.split(separator: "(")
             theme = "Culture G 📚"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
@@ -314,7 +314,7 @@ struct GameView: View {
             let raw = GameData.TrueOrFalse.randomElement() ?? ""
             let parts = raw.split(separator: "(")
             theme = "Vrai ou Faux ✅"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
@@ -325,7 +325,7 @@ struct GameView: View {
             secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
             let confidence = GameData.Confidence.randomElement() ?? ""
             theme = "Confidences 🕵️"
-            sip = "🥃🥃"
+            sip = "2 Zaps"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name), concernant \(sp.name) : \(confidence)"
             }
