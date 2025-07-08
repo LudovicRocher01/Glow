@@ -388,7 +388,7 @@ struct GameView: View {
             currentQuestionIndex += 1
             generateNewChallenge()
         } else {
-            path = NavigationPath()
+            path.append("endGame")
         }
     }
 

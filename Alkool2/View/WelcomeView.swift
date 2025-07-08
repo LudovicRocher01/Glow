@@ -14,9 +14,9 @@ struct WelcomeView: View {
     @State private var path = NavigationPath()
     @FocusState private var isInputActive: Bool
     @State private var showPlayerAlert = false
-        
-    private let allAvatars = ["monkey", "cat", "dog", "bear", "wolf", "lion", "fox", "penguin", "crocodile", "panda", "pig", "elephant"]
+    @State private var gameID = 0
     
+    private let allAvatars = ["monkey", "cat", "dog", "bear", "wolf", "lion", "fox", "penguin", "crocodile", "panda"]
     @State private var selectedAvatar: String = ""
     
     var remainingAvatars: [String] {
@@ -53,9 +53,7 @@ struct WelcomeView: View {
                                     .background(selectedAvatar == avatarName ? Color.buttonRed.opacity(0.8) : Color.clear)
                                     .clipShape(Circle())
                                     .overlay(Circle().stroke(Color.white, lineWidth: selectedAvatar == avatarName ? 2 : 0))
-                                    .onTapGesture {
-                                        selectedAvatar = avatarName
-                                    }
+                                    .onTapGesture { selectedAvatar = avatarName }
                             }
                         }
                         .padding(.horizontal)
@@ -130,6 +128,11 @@ struct WelcomeView: View {
                             let themes = UserDefaults.standard.array(forKey: "selectedThemes") as? [String] ?? []
                             let count = UserDefaults.standard.integer(forKey: "savedQuestionCount")
                             GameView(path: $path, players: players, selectedThemes: themes, totalQuestions: count)
+                                .id(gameID)
+                            
+                        case "endGame":
+                            EndGameView(path: $path, onReplay: incrementGameID)
+                            
                         default:
                             EmptyView()
                         }
@@ -154,10 +157,7 @@ struct WelcomeView: View {
             Cette application est destinée à un public adulte (17+).\n\nElle contient des références à l’alcool, à la sexualité et à des substances.\n\nElle n'encourage pas leur consommation réelle.\n\nVeuillez jouer de manière responsable.
             """)
         }
-        .onChange(of: players) { _ in
-            updateSelectedAvatar()
-        }
-        .onAppear {
+        .onChange(of: players, initial: true) {
             updateSelectedAvatar()
         }
     }
@@ -183,6 +183,10 @@ struct WelcomeView: View {
     func removePlayer(_ player: Player) {
         players.removeAll { $0.id == player.id }
         Player.saveToUserDefaults(players)
+    }
+    
+    func incrementGameID() {
+        gameID += 1
     }
 }
 
