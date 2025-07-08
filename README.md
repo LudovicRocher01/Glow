@@ -1,6 +1,6 @@
-# Alkool 🍻 – Jeu à boire pour iOS
+# Glou 🍻 – Jeu à boire pour iOS
 
-**Alkool** est une application mobile festive qui pimente vos soirées entre amis à travers des défis, questions et mini-jeux à base d’alcool (ou non 😄).
+**Glou** est une application mobile festive qui pimente vos soirées entre amis à travers des défis, questions et mini-jeux à base d’alcool (ou non 😄).
 
 ## 🎯 Fonctionnalités principales
 
