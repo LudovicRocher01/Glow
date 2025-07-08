@@ -10,6 +10,7 @@ import Foundation
 struct Player: Identifiable, Codable, Equatable {
     var id = UUID()
     var name: String
+    var avatar: String
 
     static func loadFromUserDefaults() -> [Player] {
         if let data = UserDefaults.standard.data(forKey: "savedPlayers"),

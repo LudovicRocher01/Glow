@@ -8,8 +8,8 @@
 import SwiftUI
 
 extension Color {
-    static let backgroundColor = Color(hex: "#070338")  // Fond principal
-    static let buttonRed = Color(red: 1.0, green: 0.3, blue: 0.3)  // Boutons
+    static let backgroundColor = Color(hex: "#070338")
+    static let buttonRed = Color(red: 1.0, green: 0.3, blue: 0.3)
 
     init(hex: String) {
         let scanner = Scanner(string: hex)

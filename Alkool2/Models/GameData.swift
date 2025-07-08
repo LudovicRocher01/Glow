@@ -746,7 +746,7 @@ struct GameData {
         "faire semblant d’aimer un plat juste pour ne pas vexer quelqu'un",
         "être capable de dormir partout et n’importe quand",
         
-        //Sexuel
+        // Sexuel
         "avoir une aventure d’un soir sans le dire à personne",
         "envoyer des nudes à la mauvaise personne par erreur",
         "être attiré(e) par quelqu’un en couple",
@@ -1281,7 +1281,7 @@ struct GameData {
         "Tu dois dire 'je suis désolé(e)' après chaque phrase que tu prononces.",
         "Tu dois poser une question bizarre à quelqu'un avant chaque Glou.",
         "Tu dois faire un bruit d’animal chaque fois que tu poses ton verre.",
-        "Tu dois terminer toutes tes phrases par 'n'est-ce pas ?'.",
+        "Tu dois terminer toutes tes phrases par `n'est-ce pas ?`.",
         "Tu ne peux plus poser ton verre sur la table, tu dois le tenir en main.",
         "Chaque fois que quelqu'un fait une blague, tu dois dire 'très drôle' sans sourire.",
     ]
@@ -1840,7 +1840,6 @@ struct GameData {
         "Quel film de Christopher Nolan voit Batman affronter le Joker ? (The Dark Knight)",
         "Quel film d'animation japonais réalisé par Hayao Miyazaki suit une jeune fille dans un monde fantastique ? (Le Voyage de Chihiro)",
         "Quel film culte des années 80 met en scène des chasseurs de fantômes ? (Ghostbusters)",
-        "Quel film de gangsters réalisé par Martin Scorsese est considéré comme un classique ? (Les Affranchis)",
         "Quel film de science-fiction de Ridley Scott se déroule dans un futur peuplé de réplicants ? (Blade Runner)",
         "Quel film de David Fincher, adapté d'un roman, explore la dualité de l'homme ? (Fight Club)",
         "Quel film d'animation Disney raconte l'histoire d'une reine dotée de pouvoirs glacials ? (La Reine des Neiges)",

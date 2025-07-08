@@ -14,6 +14,15 @@ struct WelcomeView: View {
     @State private var path = NavigationPath()
     @FocusState private var isInputActive: Bool
     @State private var showPlayerAlert = false
+        
+    private let allAvatars = ["monkey", "cat", "dog", "bear", "wolf", "lion", "fox", "penguin", "crocodile", "panda", "pig", "elephant"]
+    
+    @State private var selectedAvatar: String = ""
+    
+    var remainingAvatars: [String] {
+        let usedAvatars = players.map { $0.avatar }
+        return allAvatars.filter { !usedAvatars.contains($0) }
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -27,63 +36,63 @@ struct WelcomeView: View {
                     Text("Glou")
                         .font(.custom("ChalkboardSE-Bold", size: 36))
                         .foregroundColor(.white)
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white, lineWidth: 3)
-                        )
+                        .padding(.vertical, 2).padding(.horizontal, 10)
+                        .background(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 3))
                         .padding(.bottom, 12)
 
                     Text("Ajoutez un joueur :")
                         .font(.custom("Marker Felt", size: 20))
                         .foregroundColor(.white)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 15) {
+                            ForEach(remainingAvatars, id: \.self) { avatarName in
+                                Image(avatarName)
+                                    .resizable().scaledToFit().frame(width: 50, height: 50)
+                                    .padding(5)
+                                    .background(selectedAvatar == avatarName ? Color.buttonRed.opacity(0.8) : Color.clear)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: selectedAvatar == avatarName ? 2 : 0))
+                                    .onTapGesture {
+                                        selectedAvatar = avatarName
+                                    }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .frame(height: 60)
 
                     ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.buttonRed, lineWidth: 2)
-                            .background(Color.buttonRed.opacity(0.6))
-                            .cornerRadius(12)
-                            .frame(height: 50)
+                        RoundedRectangle(cornerRadius: 12).stroke(Color.buttonRed, lineWidth: 2)
+                            .background(Color.buttonRed.opacity(0.6)).cornerRadius(12).frame(height: 50)
 
                         HStack {
-                            TextField("", text: $playerName)
-                                .padding(.leading, 12)
-                                .foregroundColor(.white)
+                            TextField("", text: $playerName, prompt: Text("Nom du joueur...").foregroundColor(.white.opacity(0.6)))
+                                .padding(.leading, 12).foregroundColor(.white)
                                 .font(.custom("Marker Felt", size: 20))
-                                .submitLabel(.done)
-                                .focused($isInputActive)
-                                .onSubmit {
-                                    let trimmed = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
-                                    if !trimmed.isEmpty {
-                                        addPlayer()
-                                        isInputActive = true
-                                    } else {
-                                        isInputActive = false
-                                    }
-                                }
-
-
-
+                                .submitLabel(.done).focused($isInputActive).onSubmit(addPlayer)
+                            
                             Spacer()
 
                             Button(action: addPlayer) {
                                 Image(systemName: "plus.circle.fill")
-                                    .resizable()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(.red)
-                                    .padding(.trailing, 12)
+                                    .resizable().frame(width: 24, height: 24)
+                                    .foregroundColor(.red).padding(.trailing, 12)
                             }
                         }
                     }
-                    .frame(maxWidth: 300)
-                    .padding(.bottom, 20)
+                    .frame(maxWidth: 300).padding(.bottom, 20)
+                    .disabled(remainingAvatars.isEmpty)
 
-
+                    if remainingAvatars.isEmpty && players.count > 0 {
+                        Text("Tous les avatars sont pris !")
+                            .font(.custom("Marker Felt", size: 16))
+                            .foregroundColor(.yellow)
+                    }
 
                     ScrollView {
                         VStack(spacing: 12) {
-                            ForEach(players, id: \.id) { player in
+                            ForEach(players) { player in
                                 PlayerRow(player: player) {
                                     removePlayer(player)
                                 }
@@ -91,29 +100,17 @@ struct WelcomeView: View {
                         }
                         .padding(.horizontal)
                     }
-
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-
+                    .scrollContentBackground(.hidden).background(Color.clear)
 
                     Button(action: {
-                        if players.count < 2 {
-                            showPlayerAlert = true
-                        } else {
-                            path.append("settings")
-                        }
+                        if players.count < 2 { showPlayerAlert = true }
+                        else { path.append("settings") }
                     }) {
                         Text("Suivant")
-                            .font(.system(size: 26, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(height: 60)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.buttonRed)
-                            .cornerRadius(18)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white, lineWidth: 2)
-                            )
+                            .font(.system(size: 26, weight: .bold)).foregroundColor(.white)
+                            .frame(height: 60).frame(maxWidth: .infinity)
+                            .background(Color.buttonRed).cornerRadius(18)
+                            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
                             .padding(.horizontal, 30)
                     }
                     .alert("Attention !", isPresented: $showPlayerAlert) {
@@ -121,9 +118,6 @@ struct WelcomeView: View {
                     } message: {
                         Text("Au moins 2 joueurs sont nécessaires pour commencer.")
                     }
-
-
-
 
                     .navigationDestination(for: String.self) { route in
                         switch route {
@@ -140,19 +134,14 @@ struct WelcomeView: View {
                             EmptyView()
                         }
                     }
-
-
                     .padding(.horizontal)
-
                     Spacer()
                 }
                 .padding()
 
                 NavigationLink(destination: InfoView()) {
                     Image(systemName: "info.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.red)
-                        .padding()
+                        .font(.title).foregroundColor(.red).padding()
                 }
             }
         }
@@ -165,23 +154,38 @@ struct WelcomeView: View {
             Cette application est destinée à un public adulte (17+).\n\nElle contient des références à l’alcool, à la sexualité et à des substances.\n\nElle n'encourage pas leur consommation réelle.\n\nVeuillez jouer de manière responsable.
             """)
         }
+        .onChange(of: players) { _ in
+            updateSelectedAvatar()
+        }
+        .onAppear {
+            updateSelectedAvatar()
+        }
+    }
+    
+    private func updateSelectedAvatar() {
+        selectedAvatar = remainingAvatars.first ?? ""
     }
 
     func addPlayer() {
-        let trimmed = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-        players.insert(Player(name: trimmed), at: 0)
+        let trimmedName = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else { return }
+        
+        guard !selectedAvatar.isEmpty else { return }
+        
+        let newPlayer = Player(name: trimmedName, avatar: selectedAvatar)
+        players.insert(newPlayer, at: 0)
         playerName = ""
         Player.saveToUserDefaults(players)
+        
+        isInputActive = true
     }
 
     func removePlayer(_ player: Player) {
         players.removeAll { $0.id == player.id }
         Player.saveToUserDefaults(players)
     }
-    
-    
 }
+
 
 struct PlayerRow: View {
     let player: Player
@@ -189,17 +193,26 @@ struct PlayerRow: View {
 
     var body: some View {
         HStack {
+            Image(player.avatar)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
+
             Text(player.name)
                 .font(.custom("Marker Felt", size: 18))
                 .foregroundColor(.white)
+            
             Spacer()
+            
             Button(action: onRemove) {
-                Text("-")
-                    .font(.system(size: 20))
+                Image(systemName: "minus.circle.fill")
+                    .font(.title2)
                     .foregroundColor(.white)
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color(hex: "#FAEBD7"), lineWidth: 2)
