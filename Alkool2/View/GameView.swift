@@ -9,9 +9,9 @@ import SwiftUI
 
 struct PlayerDisplayView: View {
     let player: Player
-    
+
     var body: some View {
-        VStack {
+        VStack(spacing: 4) {
             Image(player.avatar)
                 .resizable()
                 .scaledToFit()
@@ -23,11 +23,14 @@ struct PlayerDisplayView: View {
                 .font(.custom("Marker Felt", size: 22))
                 .foregroundColor(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.85)
+                .truncationMode(.tail)
+                .frame(maxWidth: 100)
         }
-        .frame(width: 80)
+        .frame(width: 100)
     }
 }
+
 
 
 struct GameView: View {

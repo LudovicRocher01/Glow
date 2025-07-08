@@ -83,7 +83,7 @@ struct WelcomeView: View {
                     .disabled(remainingAvatars.isEmpty)
 
                     if remainingAvatars.isEmpty && players.count > 0 {
-                        Text("Tous les avatars sont pris !")
+                        Text("Limite de joueurs atteinte !")
                             .font(.custom("Marker Felt", size: 16))
                             .foregroundColor(.yellow)
                     }
