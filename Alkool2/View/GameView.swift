@@ -25,10 +25,16 @@ struct GameView: View {
     @State private var remainingTime = 30
     @State private var timer: Timer?
     @State private var showChronoButton = false
+    @State private var previousPlayer: Player? = nil
+    @State private var currentPlayer: Player? = nil
+    @State private var isTrueFalseQuestion = false
+    @State private var hasAnsweredTrueFalse = false
+    @State private var correctAnswerIsVrai = false
+    @State private var justification: String? = nil
     @State private var currentAnswer: String = ""
     @State private var shouldRevealAnswer: Bool = false
-    @State private var previousPlayer: Player? = nil
-    
+
+
     var body: some View {
         ZStack {
             Color.backgroundColor
@@ -36,15 +42,7 @@ struct GameView: View {
             
             VStack(spacing: 20) {
                 HStack {
-                    Button("Quitter") {
-                        showQuitAlert = true
-                    }
-                    .alert("Quitter la partie", isPresented: $showQuitAlert) {
-                        Button("Oui", role: .destructive) {
-                            path = NavigationPath()
-                        }
-                        Button("Non", role: .cancel) { }
-                    }
+                    Button("Quitter") { showQuitAlert = true }
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
@@ -79,7 +77,6 @@ struct GameView: View {
                         .font(.system(size: 30))
                 }
                 .foregroundColor(.white)
-
                 
                 Text(sip)
                     .font(.custom("Marker Felt", size: 30))
@@ -97,7 +94,6 @@ struct GameView: View {
                 }
                 .frame(maxHeight: 200)
 
-
                 Spacer()
 
                 if showTimer {
@@ -108,27 +104,15 @@ struct GameView: View {
                             .foregroundColor(remainingTime <= 5 ? .red : .white)
                             .padding()
                             .animation(.easeInOut(duration: 0.3), value: remainingTime)
-                            .overlay(
-                                Circle().stroke(Color.white, lineWidth: 2)
-                                    .frame(width: 80, height: 80)
-                            )
+                            .overlay(Circle().stroke(Color.white, lineWidth: 2).frame(width: 80, height: 80))
                     } else {
-                        Text("Temps écoulé")
-                            .font(.title2)
-                            .foregroundColor(.red)
-                            .padding()
+                        Text("Temps écoulé").font(.title2).foregroundColor(.red).padding()
                     }
                 }
                 else if showChronoButton {
-                    Button("Chrono") {
-                        startTimer()
-                    }
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.buttonRed)
-                    .cornerRadius(12)
+                    Button("Chrono") { startTimer() }
+                    .foregroundColor(.white).padding().background(Color.buttonRed).cornerRadius(12)
                 }
-
 
                 ProgressView(
                     value: Double(min(max(currentQuestionIndex, 0), totalQuestions)),
@@ -137,37 +121,58 @@ struct GameView: View {
                 .accentColor(.red)
                 .padding(.horizontal, 40)
 
-
-                Button(action: {
-                    if shouldRevealAnswer {
-                        question = currentAnswer
-                        shouldRevealAnswer = false
-                    } else {
-                        nextQuestion()
+                if isTrueFalseQuestion && !hasAnsweredTrueFalse {
+                    HStack(spacing: 20) {
+                        Button(action: { checkTrueFalseAnswer(userChoiceIsVrai: true) }) {
+                            Text("Vrai")
+                                .font(.system(size: 26, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(height: 60)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.green)
+                                .cornerRadius(18)
+                                .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
+                        }
+                        
+                        Button(action: { checkTrueFalseAnswer(userChoiceIsVrai: false) }) {
+                            Text("Faux")
+                                .font(.system(size: 26, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(height: 60)
+                                .frame(maxWidth: .infinity)
+                                .background(Color.buttonRed)
+                                .cornerRadius(18)
+                                .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
+                        }
                     }
-                }) {
-                    Text(shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex == totalQuestions ? "Terminer la partie" : "Prochaine question"))
-                        .font(.system(size: 26, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(height: 60)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.buttonRed)
-                        .cornerRadius(18)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 18)
-                                .stroke(Color.white, lineWidth: 2)
-                        )
+                    .padding(.horizontal, 30)
+                    .padding(.bottom, 20)
+                } else {
+                    Button(action: {
+                        if shouldRevealAnswer {
+                            question = currentAnswer
+                            shouldRevealAnswer = false
+                        } else {
+                            nextQuestion()
+                        }
+                    }) {
+                        Text(shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex >= totalQuestions ? "Terminer la partie" : "Prochaine question"))
+                            .font(.system(size: 26, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(height: 60)
+                            .frame(maxWidth: .infinity)
+                            .background(Color.buttonRed)
+                            .cornerRadius(18)
+                            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
+                    }
+                    .padding(.horizontal, 30)
+                    .padding(.bottom, 20)
                 }
-                .padding(.horizontal, 30)
-                .padding(.bottom, 20)
-
             }
         }
         .navigationBarHidden(true)
         .alert("Quitter la partie", isPresented: $showQuitAlert) {
-            Button("Oui", role: .destructive) {
-                path = NavigationPath()
-            }
+            Button("Oui", role: .destructive) { path = NavigationPath() }
             Button("Non", role: .cancel) { }
         } message: {
             Text("Êtes-vous sûr de vouloir quitter la partie ?")
@@ -177,33 +182,39 @@ struct GameView: View {
         }
     }
     
+    private func checkTrueFalseAnswer(userChoiceIsVrai: Bool) {
+        guard let player = currentPlayer else { return }
+
+        let isCorrect = (userChoiceIsVrai == correctAnswerIsVrai)
+        var resultMessage: String
+
+        if isCorrect {
+            resultMessage = "Bonne réponse ! \(player.name), tu distribues 2 Glous."
+        } else {
+            resultMessage = "Mauvaise réponse ! \(player.name), tu prends 2 Glous."
+        }
+        
+        if let justif = justification {
+            resultMessage += "\n\n\(justif)"
+        } else {
+            resultMessage += "\n\nLa réponse était : \(correctAnswerIsVrai ? "Vrai" : "Faux")."
+        }
+        
+        self.question = resultMessage
+        self.hasAnsweredTrueFalse = true
+    }
+    
     private func getAvailableThemeTypes() -> [Int] {
         var themeList = [Int]()
 
-        if selectedThemes.contains("Catégorie") {
-            themeList += [0, 1, 2, 21, 22]
-        }
-        if selectedThemes.contains("Autres") {
-            themeList += [12,13,14,15,18,29]
-        }
-        if selectedThemes.contains("Je n'ai jamais") {
-            themeList += [6,7,8]
-        }
-        if selectedThemes.contains("Qui pourrait") {
-            themeList += [9,10,11]
-        }
-        if selectedThemes.contains("Jeux") {
-            themeList += [3,4,5,16,17]
-        }
-        if selectedThemes.contains("Débats") {
-            themeList += [19,20]
-        }
-        if selectedThemes.contains("Culture G") {
-            themeList += [23,24,25]
-        }
-        if selectedThemes.contains("Vrai ou Faux") {
-            themeList += [26,27,28]
-        }
+        if selectedThemes.contains("Catégorie") { themeList += [0, 1, 2, 21, 22] }
+        if selectedThemes.contains("Autres") { themeList += [12,13,14,15,18,29] }
+        if selectedThemes.contains("Je n'ai jamais") { themeList += [6,7,8] }
+        if selectedThemes.contains("Qui pourrait") { themeList += [9,10,11] }
+        if selectedThemes.contains("Jeux") { themeList += [3,4,5,16,17] }
+        if selectedThemes.contains("Débats") { themeList += [19,20] }
+        if selectedThemes.contains("Culture G") { themeList += [23,24,25] }
+        if selectedThemes.contains("Vrai ou Faux") { themeList += [26,27,28] }
 
         return themeList
     }
@@ -213,10 +224,15 @@ struct GameView: View {
         showTimer = false
         remainingTime = 30
         showChronoButton = false
+        
         shouldRevealAnswer = false
         currentAnswer = ""
-
-
+        
+        isTrueFalseQuestion = false
+        hasAnsweredTrueFalse = false
+        justification = nil
+        currentPlayer = nil
+        
         guard !selectedThemes.isEmpty else {
             theme = "Aucun thème sélectionné"
             sip = ""
@@ -231,6 +247,8 @@ struct GameView: View {
             randomPlayer = players.randomElement()!
         } while players.count > 1 && randomPlayer.name == previousPlayer?.name
         previousPlayer = randomPlayer
+        
+        self.currentPlayer = randomPlayer
 
         var secondPlayer: Player? = nil
         var message = ""
@@ -331,16 +349,26 @@ struct GameView: View {
 
         case 26...28:
             let raw = GameData.TrueOrFalse.randomElement() ?? ""
-            let parts = raw.split(separator: "(")
+            let parts = raw.split(separator: "(", maxSplits: 1)
+            
             theme = "Vrai ou Faux"
             themeIcon = "checkmark.circle"
             sip = "2 Glous"
+            isTrueFalseQuestion = true
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
+            
             if parts.count > 1 {
-                currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
-                shouldRevealAnswer = true
+                let answerContent = String(parts[1].dropLast())
+                let answerParts = answerContent.split(separator: ",", maxSplits: 1)
+                
+                let booleanAnswerString = String(answerParts[0]).trimmingCharacters(in: .whitespaces)
+                self.correctAnswerIsVrai = (booleanAnswerString.lowercased() == "vrai")
+                
+                if answerParts.count > 1 {
+                    self.justification = String(answerParts[1]).trimmingCharacters(in: .whitespaces)
+                }
             }
-
+            
         case 29:
             secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
             let confidence = GameData.Confidence.randomElement() ?? ""
@@ -361,17 +389,12 @@ struct GameView: View {
         question = message
     }
 
-
     private func nextQuestion() {
-        timer?.invalidate()
-        showTimer = false
-        remainingTime = 30
-        
         if currentQuestionIndex < totalQuestions {
             currentQuestionIndex += 1
             generateNewChallenge()
         } else {
-            showQuitAlert = true
+            path = NavigationPath()
         }
     }
 
@@ -379,12 +402,11 @@ struct GameView: View {
         showTimer = true
         remainingTime = 30
         timer?.invalidate()
-        
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if remainingTime > 0 {
-                remainingTime -= 1
+            if self.remainingTime > 0 {
+                self.remainingTime -= 1
             } else {
-                timer?.invalidate()
+                self.timer?.invalidate()
             }
         }
     }
