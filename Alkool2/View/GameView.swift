@@ -240,43 +240,43 @@ struct GameView: View {
             let category = GameData.categories.randomElement() ?? "une catégorie"
             theme = "Catégorie"
             themeIcon = "folder.fill"
-            sip = "10 Zaps max"
-            message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer un Zap. Si tu te trompes, c'est toi qui prends."
+            sip = "10 Glous max"
+            message = "\(randomPlayer.name), tu as 30 secondes pour citer autant \(category) que possible. Chaque bonne réponse te permet de distribuer un Glou. Si tu te trompes, c'est toi qui prends."
             showChronoButton = true
 
         case 3...5:
             let challenge = GameData.challenges.randomElement() ?? ""
             theme = "Défi"
             themeIcon = "target"
-            sip = "3 Zaps"
+            sip = "3 Glous"
             message = "\(randomPlayer.name), \(challenge)"
 
         case 6...8:
             let never = GameData.NeverHave.randomElement() ?? ""
             theme = "Je n'ai jamais"
             themeIcon = "hand.raised.fill"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = never
 
         case 9...11:
             let who = GameData.Who.randomElement() ?? ""
             theme = "Qui pourrait"
             themeIcon = "person.crop.circle.badge.questionmark"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = "\(who) ?"
 
         case 12...13:
             let action = GameData.OneUnluck.randomElement() ?? ""
             theme = "Action"
             themeIcon = "figure.run"
-            sip = "Zaps?"
+            sip = "Glous?"
             message = "\(randomPlayer.name), \(action)"
 
         case 14...15:
             let group = GameData.Unluck.randomElement() ?? ""
             theme = "Action Groupe"
             themeIcon = "person.3.fill"
-            sip = "Zaps?"
+            sip = "Glous?"
             message = group
 
         case 16:
@@ -284,7 +284,7 @@ struct GameView: View {
             let versus = GameData.Versus.randomElement() ?? ""
             theme = "Versus"
             themeIcon = "flag.checkered"
-            sip = "3 Zaps"
+            sip = "3 Glous"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name) et \(sp.name), \(versus)"
             }
@@ -293,28 +293,28 @@ struct GameView: View {
             let game = GameData.Game.randomElement() ?? ""
             theme = "Jeu"
             themeIcon = "gamecontroller.fill"
-            sip = "3 Zaps"
+            sip = "3 Glous"
             message = "\(game). \(randomPlayer.name), à toi l'honneur !"
 
         case 18:
             let curse = GameData.Malediction.randomElement() ?? ""
             theme = "Malédiction"
             themeIcon = "bolt.trianglebadge.exclamationmark"
-            sip = "1 Zap par erreur"
+            sip = "1 Glou par erreur"
             message = "\(randomPlayer.name), jusqu'à la fin de la partie : \(curse)"
 
         case 19...20:
             let debate = GameData.Debate.randomElement() ?? ""
             theme = "Débat"
             themeIcon = "quote.bubble.fill"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = debate
 
         case 21...22:
             let round = GameData.RoundCategories.randomElement() ?? "une catégorie"
             theme = "Catégorie"
             themeIcon = "list.bullet.rectangle"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = "Chacun son tour, citez \(round). Celui qui se trompe ou hésite trop perd. \(randomPlayer.name), tu commences !"
 
         case 23...25:
@@ -322,7 +322,7 @@ struct GameView: View {
             let parts = raw.split(separator: "(")
             theme = "Culture G"
             themeIcon = "book.closed.fill"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
@@ -334,7 +334,7 @@ struct GameView: View {
             let parts = raw.split(separator: "(")
             theme = "Vrai ou Faux"
             themeIcon = "checkmark.circle"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             message = "\(randomPlayer.name), \(parts[0].trimmingCharacters(in: .whitespaces))"
             if parts.count > 1 {
                 currentAnswer = parts[1].replacingOccurrences(of: ")", with: "")
@@ -346,7 +346,7 @@ struct GameView: View {
             let confidence = GameData.Confidence.randomElement() ?? ""
             theme = "Confidences"
             themeIcon = "lock.shield"
-            sip = "2 Zaps"
+            sip = "2 Glous"
             if let sp = secondPlayer {
                 message = "\(randomPlayer.name), concernant \(sp.name) : \(confidence)"
             }

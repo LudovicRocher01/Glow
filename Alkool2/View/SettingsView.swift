@@ -49,6 +49,12 @@ struct SettingsView: View {
                                 )
                         }
                         Spacer()
+                        
+                        NavigationLink(destination: InfoSettingsView()) {
+                            Image(systemName: "info.circle.fill")
+                                .font(.title)
+                                .foregroundColor(.red)
+                        }
                     }
                     .padding(.horizontal)
 
@@ -62,7 +68,7 @@ struct SettingsView: View {
                                 .stroke(Color.white, lineWidth: 3)
                         )
 
-                    Text("Veuillez choisir les thèmes\navec lesquels vous voulez jouer :")
+                    Text("Veuillez choisir un ou plusieurs thèmes pour jouer :")
                         .font(.custom("Marker Felt", size: isSmall ? 14 : 18))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
@@ -142,6 +148,7 @@ struct SettingsView: View {
         }
     }
 }
+
 
 struct ThemeCell: View {
     let themeName: String
