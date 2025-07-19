@@ -14,15 +14,19 @@ struct EndGameView: View {
 
     var body: some View {
         ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
 
             VStack(spacing: 40) {
                 Spacer()
 
                 Text("Fin de la partie !")
-                    .font(.custom("Marker Felt", size: 42))
-                    .foregroundColor(.white)
+                    .font(.system(size: 42, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
 
                 Image(systemName: "party.popper.fill")
                     .font(.system(size: 100))
@@ -37,36 +41,32 @@ struct EndGameView: View {
                     Button(action: {
                         onReplay()
                         
-                        path.removeLast(2)
+                        if path.count >= 2 {
+                            path.removeLast(2)
+                        }
                         path.append("gameView")
                     }) {
-                        Text("Rejouer")
-                            .font(.system(size: 26, weight: .bold))
-                            .foregroundColor(.white)
+                        Label("Rejouer", systemImage: "arrow.counterclockwise")
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundColor(.deepSpaceBlue)
                             .frame(height: 60)
                             .frame(maxWidth: .infinity)
-                            .background(Color.green)
-                            .cornerRadius(18)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white, lineWidth: 2)
-                            )
+                            .background(Color.electricCyan)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: .electricCyan.opacity(0.7), radius: 8, x: 0, y: 4)
                     }
 
                     Button(action: {
                         path = NavigationPath()
                     }) {
                         Text("Retourner au menu")
-                            .font(.system(size: 22, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .foregroundColor(.starWhite)
                             .frame(height: 60)
                             .frame(maxWidth: .infinity)
-                            .background(Color.buttonRed)
-                            .cornerRadius(18)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white, lineWidth: 2)
-                            )
+                            .background(Color.neonMagenta)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: .neonMagenta.opacity(0.7), radius: 8, x: 0, y: 4)
                     }
                 }
                 .padding(.horizontal, 40)

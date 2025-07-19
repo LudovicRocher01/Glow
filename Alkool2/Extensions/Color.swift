@@ -25,3 +25,11 @@ extension Color {
         self.init(.sRGB, red: r, green: g, blue: b, opacity: 1)
     }
 }
+
+struct GlassCardBackground: View {
+    var body: some View {
+        Color.white.opacity(0.1)
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+}

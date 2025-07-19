@@ -12,82 +12,87 @@ struct InfoView: View {
 
     var body: some View {
         ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
 
             VStack(spacing: 20) {
-                VStack(spacing: 12) {
-                    HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Text("Retour")
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
-                                .background(Color.buttonRed)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white, lineWidth: 1)
-                                )
-                        }
-                        Spacer()
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Label("Retour", systemImage: "chevron.left")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.starWhite)
+                            .padding(.horizontal, 16).padding(.vertical, 10)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Capsule())
                     }
-
-                    Text("Glou")
-                        .font(.custom("ChalkboardSE-Bold", size: 36))
-                        .foregroundColor(.white)
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white, lineWidth: 3)
-                        )
-                        .padding(.bottom, 12)
-                        
+                    Spacer()
                 }
                 .padding(.horizontal)
                 .padding(.top)
 
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("Bienvenue dans Glou, le jeu festif qui anime vos soirées entre amis !")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
+                Text("Glou")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
+                    .padding(.bottom, 20)
+                                
+                VStack(alignment: .leading, spacing: 25) {
+                    Text("Bienvenue dans Glou, le jeu qui illumine vos soirées !")
+                        .font(.system(size: 18, weight: .medium, design: .rounded))
+                        .foregroundColor(.starWhite)
+                        .padding(.bottom, 10)
 
-                    Text("Règles du jeu :")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
-                        .bold()
+                    Text("Comment jouer ?")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .foregroundColor(.electricCyan)
 
-                    Label("Chaque carte indique une action, un défi ou une consigne à suivre. À vous de jouer !", systemImage: "gamecontroller.fill")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
-
-                    Label("Un joueur peut cumuler deux malédictions. En cas de nouvelle, les autres joueurs choisissent lesquelles conserver.", systemImage: "person.fill.questionmark")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
-
-                    Label("Ce jeu est conçu pour un usage amusant, convivial et respectueux. Chacun reste libre de participer à sa façon.", systemImage: "hand.raised.fill")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
-
-                    Label("L’application n’encourage aucun comportement à risque. Restez à l’écoute de vos limites et de celles des autres.", systemImage: "exclamationmark.triangle.fill")
-                        .font(.custom("Marker Felt", size: 18))
-                        .foregroundColor(.white)
-
+                    InfoLabel(
+                        icon: "party.popper.fill",
+                        text: "**Mode Classique :** Le mode par défaut. Suivez simplement les instructions de chaque carte pour une partie amusante, parfaite pour tous les groupes."
+                    )
+                    
+                    InfoLabel(
+                        icon: "wineglass.fill",
+                        text: "**Mode Glou (17+) :** Une version alternative où les perdants reçoivent des gages. Ce mode est optionnel et doit être choisi en connaissance de cause."
+                    )
+                    
+                    InfoLabel(
+                        icon: "hand.raised.fill",
+                        text: "Amusez-vous dans le respect et la bonne humeur. Chacun est toujours libre de participer à sa manière."
+                    )
                 }
-                .font(.callout)
                 .padding(.horizontal, 30)
 
                 Spacer()
 
                 Text("v 1.0.0")
-                    .foregroundColor(.white.opacity(0.6))
                     .font(.footnote)
+                    .foregroundColor(.starWhite.opacity(0.6))
                     .padding(.bottom, 10)
             }
         }
         .navigationBarHidden(true)
+    }
+}
+
+struct InfoLabel: View {
+    let icon: String
+    let text: String
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 15) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(.electricCyan)
+                .frame(width: 25, alignment: .center)
+            
+            Text(LocalizedStringKey(text))
+                .font(.system(size: 16, weight: .regular, design: .rounded))
+                .foregroundColor(.starWhite)
+                .lineSpacing(4)
+        }
     }
 }

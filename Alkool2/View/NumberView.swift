@@ -26,68 +26,81 @@ struct NumberView: View {
         GameLengthPreset(title: "Apéro", subtitle: "15 Questions", questionCount: 15, iconName: "sun.min.fill"),
         GameLengthPreset(title: "Soirée", subtitle: "30 Questions", questionCount: 30, iconName: "moon.stars.fill"),
         GameLengthPreset(title: "Marathon", subtitle: "50 Questions", questionCount: 50, iconName: "flame.fill"),
-        GameLengthPreset(title: "Jusqu'au bout de la nuit", subtitle: "80 Questions", questionCount: 80, iconName: "crown.fill")
+        GameLengthPreset(title: "After", subtitle: "80 Questions", questionCount: 80, iconName: "crown.fill")
     ]
     
     @State private var questionCount: Int = 30
     
     var body: some View {
         ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
             
             VStack(spacing: 25) {
                 HStack {
                     Button(action: { dismiss() }) {
-                        Text("Retour").foregroundColor(.white).padding(.horizontal, 20).padding(.vertical, 10)
-                            .background(Color.buttonRed).cornerRadius(12)
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.white, lineWidth: 1))
+                        Label("Retour", systemImage: "chevron.left")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.starWhite)
+                            .padding(.horizontal, 16).padding(.vertical, 10)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Capsule())
                     }
                     Spacer()
                 }
                 .padding(.horizontal)
                 
                 Text("Glou")
-                    .font(.custom("ChalkboardSE-Bold", size: 36))
-                    .foregroundColor(.white).padding(.vertical, 2).padding(.horizontal, 10)
-                    .background(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 3))
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
                     .padding(.bottom, 12)
         
-                Text("Choisissez la durée de la partie :")
-                    .font(.custom("Marker Felt", size: 22))
-                    .foregroundColor(.white)
+                Text("Choisissez la durée de la partie")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
                     .multilineTextAlignment(.center)
                 
                 VStack(spacing: 15) {
                     ForEach(presets) { preset in
                         Button(action: {
-                            questionCount = preset.questionCount
-                            saveQuestionCount()
+                            withAnimation(.spring()) {
+                                questionCount = preset.questionCount
+                                saveQuestionCount()
+                            }
                         }) {
-                            HStack(spacing: 15) {
+                            HStack(spacing: 20) {
                                 Image(systemName: preset.iconName)
                                     .font(.title2)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(.electricCyan)
                                     .frame(width: 30)
                                 
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 2) {
                                     Text(preset.title)
-                                        .font(.custom("Marker Felt", size: 20))
+                                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                                        .minimumScaleFactor(0.8)
+                                        .lineLimit(2)
                                     Text(preset.subtitle)
-                                        .font(.system(size: 14, weight: .light))
+                                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                                        .foregroundColor(.lavenderMist)
                                 }
-                                .foregroundColor(.white)
+                                .foregroundColor(.starWhite)
                                 
                                 Spacer()
                             }
                             .padding()
                             .background(
-                                questionCount == preset.questionCount ? Color.buttonRed.opacity(0.6) : Color.black.opacity(0.2)
-                            )
-                            .cornerRadius(15)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 15)
-                                    .stroke(questionCount == preset.questionCount ? Color.green : Color.white, lineWidth: 2)
+                                ZStack {
+                                    GlassCardBackground()
+                                    if questionCount == preset.questionCount {
+                                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                                            .stroke(Color.electricCyan, lineWidth: 3)
+                                            .shadow(color: .electricCyan, radius: 5)
+                                    }
+                                }
                             )
                         }
                     }
@@ -101,13 +114,15 @@ struct NumberView: View {
                 }) {
                     HStack {
                         Text("Jouer")
-                            .font(.system(size: 26, weight: .bold))
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
                         Image(systemName: "play.fill")
-                            .font(.system(size: 26, weight: .bold))
+                            .font(.system(size: 20, weight: .bold))
                     }
-                    .foregroundColor(.white).frame(height: 60).frame(maxWidth: .infinity)
-                    .background(Color.buttonRed).cornerRadius(18)
-                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
+                    .foregroundColor(.starWhite)
+                    .frame(height: 60).frame(maxWidth: .infinity)
+                    .background(Color.neonMagenta)
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                    .shadow(color: .neonMagenta, radius: 8, x: 0, y: 4)
                 }
                 .padding(.horizontal, 30)
                 .padding(.bottom, 20)

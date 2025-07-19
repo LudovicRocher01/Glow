@@ -31,63 +31,54 @@ struct SettingsView: View {
             let isSmall = geometry.size.height < 700
 
             ZStack {
-                Color.backgroundColor
-                    .ignoresSafeArea()
+                LinearGradient(
+                    gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                ).ignoresSafeArea()
 
-                VStack(spacing: isSmall ? 10 : 20) {
+                VStack(spacing: isSmall ? 15 : 20) {
                     HStack {
                         Button(action: { dismiss() }) {
-                            Text("Retour")
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
-                                .background(Color.buttonRed)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white, lineWidth: 1)
-                                )
+                            Label("Retour", systemImage: "chevron.left")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.starWhite)
+                                .padding(.horizontal, 16).padding(.vertical, 10)
+                                .background(Color.white.opacity(0.1))
+                                .clipShape(Capsule())
                         }
                         Spacer()
                         
                         NavigationLink(destination: InfoSettingsView()) {
                             Image(systemName: "info.circle.fill")
                                 .font(.title)
-                                .foregroundColor(.red)
+                                .foregroundColor(.starWhite.opacity(0.8))
                         }
                     }
                     .padding(.horizontal)
 
                     Text("Glou")
-                        .font(.custom("ChalkboardSE-Bold", size: isSmall ? 28 : 36))
-                        .foregroundColor(.white)
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white, lineWidth: 3)
-                        )
+                        .font(.system(size: isSmall ? 36 : 40, weight: .bold, design: .rounded))
+                        .foregroundColor(.starWhite)
+                        .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
+                        .padding(.bottom, 5)
 
-                    Text("Veuillez choisir un ou plusieurs thèmes pour jouer :")
-                        .font(.custom("Marker Felt", size: isSmall ? 14 : 18))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .lineLimit(nil)
-                        .fixedSize(horizontal: false, vertical: true)
+                    Text("Choisissez vos thèmes")
+                        .font(.system(size: isSmall ? 20 : 22, weight: .bold, design: .rounded))
+                        .foregroundColor(.starWhite)
                         .padding(.horizontal, 30)
 
-                    LazyVGrid(columns: [GridItem(), GridItem()], spacing: isSmall ? 10 : 15) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 140))], spacing: 20) {
                         ForEach(themes, id: \.0) { theme in
-                            ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0), isSmall: isSmall)
-                                .contentShape(Rectangle())
+                            ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0))
                                 .onTapGesture {
-                                    toggleSelection(theme.0)
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        toggleSelection(theme.0)
+                                    }
                                 }
                         }
                     }
                     .padding(.horizontal)
-
-                    Spacer()
 
                     Button(action: {
                         if selectedThemes.isEmpty {
@@ -97,16 +88,13 @@ struct SettingsView: View {
                         }
                     }) {
                         Text("Suivant")
-                            .font(.system(size: 26, weight: .bold))
-                            .foregroundColor(.white)
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundColor(.starWhite)
                             .frame(height: 60)
                             .frame(maxWidth: .infinity)
-                            .background(Color.buttonRed)
-                            .cornerRadius(18)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .stroke(Color.white, lineWidth: 2)
-                            )
+                            .background(Color.neonMagenta)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: .neonMagenta, radius: 8, x: 0, y: 4)
                     }
                     .padding(.horizontal, 30)
                     .padding(.bottom, isSmall ? 10 : 20)
@@ -157,20 +145,29 @@ struct ThemeCell: View {
     var isSmall: Bool = false
 
     var body: some View {
-        VStack(spacing: isSmall ? 4 : 8) {
+        VStack(spacing: 8) {
             Image(systemName: iconName)
-                .font(isSmall ? .body : .title)
-                .foregroundColor(isSelected ? .green : .white)
+                .font(.system(size: isSelected ? 36 : 30))
+                .foregroundColor(isSelected ? .electricCyan : .starWhite)
+                .symbolEffect(.bounce, value: isSelected)
+            
             Text(themeName)
-                .font(.custom("Marker Felt", size: isSmall ? 14 : 18))
-                .foregroundColor(.white)
+                .font(.system(size: 16, weight: .semibold, design: .rounded))
+                .foregroundColor(.starWhite)
                 .multilineTextAlignment(.center)
         }
-        .padding(isSmall ? 8 : 12)
-        .frame(maxWidth: .infinity, minHeight: isSmall ? 70 : 90)
+        .padding()
+        .frame(minHeight: 90)
+        .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(isSelected ? Color.green : Color.white, lineWidth: 2)
+            ZStack {
+                GlassCardBackground()
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.electricCyan, lineWidth: 3)
+                        .shadow(color: .electricCyan, radius: 5, x: 0, y: 0)
+                }
+            }
         )
     }
 }

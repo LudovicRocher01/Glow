@@ -16,75 +16,90 @@ struct WelcomeView: View {
     @State private var showPlayerAlert = false
     @State private var gameID = 0
     
-    private let allAvatars = ["monkey", "cat", "dog", "bear", "wolf", "lion", "fox", "penguin", "crocodile", "panda"]
+    private let allAvatars = ["monkey", "cat", "dog", "bear", "wolf", "lion", "fox", "penguin", "crocodile", "panda", "elephant", "pig"]
     @State private var selectedAvatar: String = ""
     
     var remainingAvatars: [String] {
         let usedAvatars = players.map { $0.avatar }
         return allAvatars.filter { !usedAvatars.contains($0) }
     }
+    
+    var backgroundGradient: some View {
+        LinearGradient(
+            gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .ignoresSafeArea()
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
             ZStack(alignment: .topTrailing) {
-                Color.backgroundColor
-                    .ignoresSafeArea()
+                backgroundGradient
 
                 VStack(spacing: 20) {
-                    Spacer().frame(height: 30)
+                    Spacer().frame(height: 10)
 
                     Text("Glou")
-                        .font(.custom("ChalkboardSE-Bold", size: 36))
-                        .foregroundColor(.white)
-                        .padding(.vertical, 2).padding(.horizontal, 10)
-                        .background(RoundedRectangle(cornerRadius: 16).stroke(Color.white, lineWidth: 3))
-                        .padding(.bottom, 12)
+                        .font(.system(size: 50, weight: .bold, design: .rounded))
+                        .foregroundColor(.starWhite)
+                        .shadow(color: .neonMagenta.opacity(0.8), radius: 10, x: 0, y: 0)
+                        .shadow(color: .neonMagenta.opacity(0.5), radius: 20, x: 0, y: 0)
 
-                    Text("Ajoutez un joueur :")
-                        .font(.custom("Marker Felt", size: 20))
-                        .foregroundColor(.white)
+                    Text("Ajoutez jusqu'à 12 joueurs")
+                        .font(.headline)
+                        .foregroundColor(.lavenderMist)
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 15) {
                             ForEach(remainingAvatars, id: \.self) { avatarName in
                                 Image(avatarName)
                                     .resizable().scaledToFit().frame(width: 50, height: 50)
-                                    .padding(5)
-                                    .background(selectedAvatar == avatarName ? Color.buttonRed.opacity(0.8) : Color.clear)
+                                    .padding(8)
+                                    .background(selectedAvatar == avatarName ? .neonMagenta.opacity(0.5) : .clear)
+                                    .background(.ultraThinMaterial)
                                     .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color.white, lineWidth: selectedAvatar == avatarName ? 2 : 0))
-                                    .onTapGesture { selectedAvatar = avatarName }
+                                    .overlay(Circle().stroke(selectedAvatar == avatarName ? .neonMagenta : .starWhite.opacity(0.5), lineWidth: 2))
+                                    .scaleEffect(selectedAvatar == avatarName ? 1.1 : 1.0)
+                                    .onTapGesture {
+                                        withAnimation(.spring()) {
+                                            selectedAvatar = avatarName
+                                        }
+                                    }
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.vertical, 5)
                     }
-                    .frame(height: 60)
+                    .frame(height: 80)
 
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12).stroke(Color.buttonRed, lineWidth: 2)
-                            .background(Color.buttonRed.opacity(0.6)).cornerRadius(12).frame(height: 50)
+                    HStack {
+                        TextField("", text: $playerName, prompt: Text("Nom du joueur...").foregroundColor(.lavenderMist))
+                            .padding(.leading, 20)
+                            .foregroundColor(.starWhite)
+                            .font(.system(size: 20, design: .rounded))
+                            .submitLabel(.done)
+                            .focused($isInputActive)
+                            .onSubmit(addPlayer)
+                        
+                        Spacer()
 
-                        HStack {
-                            TextField("", text: $playerName, prompt: Text("Nom du joueur...").foregroundColor(.white.opacity(0.6)))
-                                .padding(.leading, 12).foregroundColor(.white)
-                                .font(.custom("Marker Felt", size: 20))
-                                .submitLabel(.done).focused($isInputActive).onSubmit(addPlayer)
-                            
-                            Spacer()
-
-                            Button(action: addPlayer) {
-                                Image(systemName: "plus.circle.fill")
-                                    .resizable().frame(width: 24, height: 24)
-                                    .foregroundColor(.red).padding(.trailing, 12)
-                            }
+                        Button(action: addPlayer) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 30))
+                                .foregroundColor(.neonMagenta)
                         }
+                        .padding(.trailing, 12)
                     }
-                    .frame(maxWidth: 300).padding(.bottom, 20)
+                    .frame(height: 55)
+                    .background(GlassCardBackground())
+                    .padding(.horizontal, 40)
                     .disabled(remainingAvatars.isEmpty)
 
                     if remainingAvatars.isEmpty && players.count > 0 {
                         Text("Limite de joueurs atteinte !")
-                            .font(.custom("Marker Felt", size: 16))
+                            .font(.headline)
                             .foregroundColor(.yellow)
                     }
 
@@ -94,31 +109,38 @@ struct WelcomeView: View {
                                 PlayerRow(player: player) {
                                     removePlayer(player)
                                 }
+                                .transition(.asymmetric(insertion: .scale.combined(with: .opacity), removal: .scale.combined(with: .opacity)))
                             }
                         }
                         .padding(.horizontal)
                     }
                     .scrollContentBackground(.hidden).background(Color.clear)
+                    .padding(.horizontal, 20)
+                    
+                    Spacer()
 
                     Button(action: {
                         if players.count < 2 { showPlayerAlert = true }
-                        else { path.append("settings") }
+                        else { path.append("modeSelection") }
                     }) {
                         Text("Suivant")
-                            .font(.system(size: 26, weight: .bold)).foregroundColor(.white)
+                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .foregroundColor(.starWhite)
                             .frame(height: 60).frame(maxWidth: .infinity)
-                            .background(Color.buttonRed).cornerRadius(18)
-                            .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.white, lineWidth: 2))
-                            .padding(.horizontal, 30)
+                            .background(Color.neonMagenta)
+                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                            .shadow(color: .neonMagenta, radius: 8, x: 0, y: 4)
                     }
+                    .padding(.horizontal, 30)
+                    .padding(.bottom, 10)
                     .alert("Attention !", isPresented: $showPlayerAlert) {
                         Button("OK", role: .cancel) {}
-                    } message: {
-                        Text("Au moins 2 joueurs sont nécessaires pour commencer.")
-                    }
+                    } message: { Text("Au moins 2 joueurs sont nécessaires pour commencer.") }
 
                     .navigationDestination(for: String.self) { route in
                         switch route {
+                        case "modeSelection":
+                            ModeSelectionView(path: $path)
                         case "settings":
                             SettingsView(path: $path, players: players)
                         case "numberView":
@@ -137,17 +159,16 @@ struct WelcomeView: View {
                             EmptyView()
                         }
                     }
-                    .padding(.horizontal)
-                    Spacer()
                 }
                 .padding()
 
                 NavigationLink(destination: InfoView()) {
                     Image(systemName: "info.circle.fill")
-                        .font(.title).foregroundColor(.red).padding()
+                        .font(.title).foregroundColor(.starWhite.opacity(0.8)).padding()
                 }
             }
         }
+        .accentColor(.starWhite)
         .alert("Avertissement", isPresented: $showDisclaimer) {
             Button("Continuer") {
                 UserDefaults.standard.set(true, forKey: "hasSeenDisclaimer")
@@ -157,31 +178,32 @@ struct WelcomeView: View {
             Cette application est destinée à un public adulte (17+).\n\nElle contient des références à l’alcool, à la sexualité et à des substances.\n\nElle n'encourage pas leur consommation réelle.\n\nVeuillez jouer de manière responsable.
             """)
         }
-        .onChange(of: players, initial: true) {
-            updateSelectedAvatar()
+        .onChange(of: players, initial: true) { _,_ in
+             withAnimation {
+                updateSelectedAvatar()
+             }
         }
     }
     
-    private func updateSelectedAvatar() {
-        selectedAvatar = remainingAvatars.first ?? ""
-    }
+    private func updateSelectedAvatar() { selectedAvatar = remainingAvatars.first ?? "" }
 
     func addPlayer() {
         let trimmedName = playerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedName.isEmpty else { return }
-        
-        guard !selectedAvatar.isEmpty else { return }
+        guard !trimmedName.isEmpty, !selectedAvatar.isEmpty else { return }
         
         let newPlayer = Player(name: trimmedName, avatar: selectedAvatar)
-        players.insert(newPlayer, at: 0)
+        withAnimation(.spring()) {
+            players.insert(newPlayer, at: 0)
+        }
         playerName = ""
         Player.saveToUserDefaults(players)
-        
-        isInputActive = true
+        isInputActive = false
     }
 
     func removePlayer(_ player: Player) {
-        players.removeAll { $0.id == player.id }
+        withAnimation(.spring()) {
+            players.removeAll { $0.id == player.id }
+        }
         Player.saveToUserDefaults(players)
     }
     
@@ -198,28 +220,25 @@ struct PlayerRow: View {
     var body: some View {
         HStack {
             Image(player.avatar)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 40, height: 40)
+                .resizable().scaledToFit().frame(width: 40, height: 40)
+                .padding(4)
+                .background(.ultraThinMaterial)
                 .clipShape(Circle())
 
             Text(player.name)
-                .font(.custom("Marker Felt", size: 18))
-                .foregroundColor(.white)
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
+                .foregroundColor(.starWhite)
             
             Spacer()
             
             Button(action: onRemove) {
-                Image(systemName: "minus.circle.fill")
+                Image(systemName: "xmark.circle.fill")
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundColor(.starWhite.opacity(0.7))
             }
         }
         .padding(.horizontal)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color(hex: "#FAEBD7"), lineWidth: 2)
-        )
+        .padding(.vertical, 10)
+        .background(GlassCardBackground())
     }
 }

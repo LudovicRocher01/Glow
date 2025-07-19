@@ -12,102 +12,52 @@ struct InfoSettingsView: View {
 
     var body: some View {
         ZStack {
-            Color.backgroundColor
-                .ignoresSafeArea()
+            LinearGradient(
+                gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
 
             VStack(spacing: 20) {
-                VStack(spacing: 12) {
-                    HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Text("Retour")
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 10)
-                                .background(Color.buttonRed)
-                                .cornerRadius(12)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.white, lineWidth: 1)
-                                )
-                        }
-                        Spacer()
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Label("Retour", systemImage: "chevron.left")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.starWhite)
+                            .padding(.horizontal, 16).padding(.vertical, 10)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Capsule())
                     }
-
-                    Text("Glou")
-                        .font(.custom("ChalkboardSE-Bold", size: 36))
-                        .foregroundColor(.white)
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white, lineWidth: 3)
-                        )
-                        .padding(.bottom, 12)
+                    Spacer()
                 }
                 .padding(.horizontal)
                 .padding(.top)
 
+                Text("Glou")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
+                    .padding(.bottom, 20)
+
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 20) {
+
+                        InfoLabel(icon: "folder.fill", text: "**Catégorie :** Chacun votre tour ou en un temps limité, citez des éléments appartenant à une catégorie donnée jusqu'à répétition ou abandon.")
                         
-                        Text("Description des thèmes :")
-                            .font(.custom("Marker Felt", size: 22))
-                            .foregroundColor(.white)
-                            .bold()
-                            .padding(.bottom, 5)
-
-                        Label {
-                            Text("**Catégorie :** Chacun votre tour ou en un temps limité, citez des éléments appartenant à une catégorie donnée jusqu'à répétition ou abandon")
-                        } icon: {
-                            Image(systemName: "folder.fill")
-                        }
+                        InfoLabel(icon: "hand.raised.fill", text: "**Je n'ai jamais :** Le grand classique. Avez-vous déjà fait ces actions ou été dans ces situations ? Si oui, vous perdez.")
                         
-                        Label {
-                            Text("**Je n'ai jamais :** Le grand classique. Avez-vous déjà fait ces actions ou été dans ces situations ? Si oui, vous perdez.")
-                        } icon: {
-                            Image(systemName: "hand.raised.fill")
-                        }
-
-                        Label {
-                            Text("**Culture G :** Testez vos connaissances avec des questions de culture générale. Attention aux pièges !")
-                        } icon: {
-                            Image(systemName: "book.fill")
-                        }
-
-                        Label {
-                            Text("**Vrai ou Faux :** Une affirmation vous est présentée. À vous de deviner si elle est vraie ou fausse. Attention aux pièges encore !")
-                        } icon: {
-                            Image(systemName: "checkmark.circle.fill")
-                        }
-
-                        Label {
-                            Text("**Qui pourrait :** Une situation est décrite. Tous les joueurs désignent la personne la plus susceptible de la faire. Le joueur le plus désigné perd.")
-                        } icon: {
-                            Image(systemName: "questionmark.circle.fill")
-                        }
-
-                        Label {
-                            Text("**Jeux :** Des mini-jeux, des défis et des duels entre joueurs pour pimenter la partie. Que le meilleur gagne !")
-                        } icon: {
-                            Image(systemName: "gamecontroller.fill")
-                        }
-
-                        Label {
-                            Text("**Débats :** Choisissez votre camp entre deux options. Les joueurs dans l'équipe minoritaire perdent.")
-                        } icon: {
-                            Image(systemName: "bubble.left.and.bubble.right.fill")
-                        }
-
-                        Label {
-                            Text("**Autres :** Un mélange de règles spéciales, de malédictions, de questions personnelles et d'actions de groupe. Attendez-vous à tout !")
-                        } icon: {
-                            Image(systemName: "sparkles")
-                        }
+                        InfoLabel(icon: "book.fill", text: "**Culture G :** Testez vos connaissances avec des questions de culture générale. Attention aux pièges !")
+                        
+                        InfoLabel(icon: "checkmark.circle.fill", text: "**Vrai ou Faux :** Une affirmation vous est présentée. À vous de deviner si elle est vraie ou fausse. Attention aux pièges encore !")
+                        
+                        InfoLabel(icon: "questionmark.circle.fill", text: "**Qui pourrait :** Une situation est décrite. Tous les joueurs désignent la personne la plus susceptible de la faire. Le joueur le plus désigné perd.")
+                        
+                        InfoLabel(icon: "gamecontroller.fill", text: "**Jeux :** Des mini-jeux, des défis et des duels entre joueurs pour pimenter la partie. Que le meilleur gagne !")
+                        
+                        InfoLabel(icon: "bubble.left.and.bubble.right.fill", text: "**Débats :** Choisissez votre camp entre deux options. Les joueurs dans l'équipe minoritaire perdent.")
+                        
+                        InfoLabel(icon: "sparkles", text: "**Autres :** Un mélange de règles spéciales, de malédictions, de questions personnelles et d'actions de groupe. Attendez-vous à tout !")
                     }
-                    .font(.custom("Marker Felt", size: 18))
-                    .foregroundColor(.white)
                 }
                 .padding(.horizontal, 30)
             }
