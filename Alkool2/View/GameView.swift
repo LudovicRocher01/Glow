@@ -83,87 +83,92 @@ struct GameView: View {
     }
 
     var body: some View {
-        ZStack {
-            LinearGradient(gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
-            
-            VStack(spacing: 15) {
-                HStack(spacing: 15) {
-                    Button("Quitter") { showQuitAlert = true }
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .foregroundColor(.starWhite).padding(.horizontal, 16).padding(.vertical, 8)
-                        .background(Color.white.opacity(0.1)).clipShape(Capsule())
-                    ProgressView(value: Double(min(max(currentQuestionIndex, 0), totalQuestions)), total: Double(totalQuestions))
-                        .tint(.neonMagenta).scaleEffect(x: 1, y: 1.5, anchor: .center)
-                }.padding(.horizontal)
+        GeometryReader { geometry in
+            let isSmallScreen = geometry.size.height < 700
+
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
                 
-                HStack(spacing: 15) {
-                    if let player1 = currentPlayer { PlayerDisplayView(player: player1)
-                        if let player2 = secondPlayerForDisplay {
-                            Text("&").font(.system(size: 30, weight: .bold, design: .rounded)).foregroundColor(.lavenderMist)
-                            PlayerDisplayView(player: player2)
+                VStack(spacing: isSmallScreen ? 10 : 15) {
+                    HStack(spacing: 15) {
+                        Button("Quitter") { showQuitAlert = true }
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundColor(.starWhite).padding(.horizontal, 16).padding(.vertical, 8)
+                            .background(Color.white.opacity(0.1)).clipShape(Capsule())
+                        ProgressView(value: Double(min(max(currentQuestionIndex, 0), totalQuestions)), total: Double(totalQuestions))
+                            .tint(.neonMagenta).scaleEffect(x: 1, y: 1.5, anchor: .center)
+                    }.padding(.horizontal)
+                    
+                    HStack(spacing: 15) {
+                        if let player1 = currentPlayer { PlayerDisplayView(player: player1)
+                            if let player2 = secondPlayerForDisplay {
+                                Text("&").font(.system(size: 30, weight: .bold, design: .rounded)).foregroundColor(.lavenderMist)
+                                PlayerDisplayView(player: player2)
+                            }
                         }
                     }
-                }.frame(height: 110).id(currentPlayer?.id.uuidString ?? "no_player").transition(.opacity.combined(with: .scale))
-                
-                VStack(spacing: 20) {
-                    Label { Text(theme).font(.system(size: 24, weight: .bold, design: .rounded)) } icon: { Image(systemName: themeIcon).font(.system(size: 24)).symbolEffect(.pulse, options: .repeating) }
-                        .foregroundColor(.electricCyan)
+                    .frame(height: isSmallScreen ? 90 : 110)
+                    .id(currentPlayer?.id.uuidString ?? "no_player").transition(.opacity.combined(with: .scale))
                     
-                    ScrollView {
-                        VStack {
-                            Spacer(minLength: 0)
-                            Text(question)
-                                .font(.system(size: 26, weight: .medium, design: .rounded))
-                                .foregroundColor(.starWhite)
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(5)
-                                .minimumScaleFactor(0.6)
-                                .padding(.horizontal, 10)
-                            Spacer(minLength: 0)
+                    VStack(spacing: isSmallScreen ? 15 : 20) {
+                        Label { Text(theme).font(.system(size: 24, weight: .bold, design: .rounded)) } icon: { Image(systemName: themeIcon).font(.system(size: 24)).symbolEffect(.pulse, options: .repeating) }
+                            .foregroundColor(.electricCyan)
+                        
+                        ScrollView {
+                            VStack {
+                                Spacer(minLength: 0)
+                                Text(question)
+                                    .font(.system(size: isSmallScreen ? 22 : 26, weight: .medium, design: .rounded))
+                                    .foregroundColor(.starWhite).multilineTextAlignment(.center).lineSpacing(5)
+                                    .minimumScaleFactor(0.6).padding(.horizontal, 10)
+                                Spacer(minLength: 0)
+                            }
+                            .frame(minHeight: isSmallScreen ? 180 : 250)
                         }
-                        .frame(minHeight: 250)
+                        .frame(maxHeight: isSmallScreen ? 180 : 250)
+                        
+                        if gameMode == .glou && !penaltyText.isEmpty {
+                            Text(penaltyText)
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.neonMagenta).padding(.vertical, 8).padding(.horizontal, 16)
+                                .background(Color.neonMagenta.opacity(0.2)).clipShape(Capsule())
+                                .transition(.opacity.combined(with: .scale))
+                        }
                     }
-                    .frame(maxHeight: 250)
+                    .padding(.vertical, isSmallScreen ? 20 : 30)
+                    .padding(.horizontal).frame(maxWidth: .infinity).background(GlassCardBackground()).padding(.horizontal, 20)
                     
-                    if gameMode == .glou && !penaltyText.isEmpty {
-                        Text(penaltyText)
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundColor(.neonMagenta).padding(.vertical, 8).padding(.horizontal, 16)
-                            .background(Color.neonMagenta.opacity(0.2)).clipShape(Capsule())
-                            .transition(.opacity.combined(with: .scale))
+                    Spacer(minLength: 10)
+                    
+                    if showTimer {
+                        if remainingTime > 0 { Text("\(remainingTime)").font(.system(size: 60, weight: .bold, design: .monospaced)).foregroundColor(remainingTime <= 10 ? .neonMagenta : .starWhite).shadow(color: remainingTime <= 10 ? .neonMagenta : .clear, radius: 10).contentTransition(.numericText()).animation(.spring(), value: remainingTime) }
+                        else { Text("Temps écoulé").font(.system(size: 24, weight: .bold, design: .rounded)).foregroundColor(.neonMagenta) }
+                    } else if showChronoButton {
+                        Button("Lancer Chrono") { startTimer() }.font(.system(size: 18, weight: .bold, design: .rounded)).foregroundColor(.starWhite).padding().background(Color.electricCyan).clipShape(Capsule()).shadow(color: .electricCyan.opacity(0.7), radius: 8)
+                    }
+                    
+                    Spacer(minLength: 10)
+                    
+                    if isTrueFalseQuestion && !hasAnsweredTrueFalse {
+                        HStack(spacing: 20) {
+                            actionButton(title: "Vrai", color: .electricCyan, foreground: .deepSpaceBlue) { checkTrueFalseAnswer(userChoiceIsVrai: true) }
+                            actionButton(title: "Faux", color: .neonMagenta) { checkTrueFalseAnswer(userChoiceIsVrai: false) }
+                        }
+                    } else {
+                        actionButton(title: shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex >= totalQuestions ? "Terminer la partie" : "Suivant"), color: shouldRevealAnswer ? .electricCyan : .neonMagenta, foreground: shouldRevealAnswer ? .deepSpaceBlue : .starWhite) {
+                            if shouldRevealAnswer { question = currentAnswer; shouldRevealAnswer = false }
+                            else { nextQuestion() }
+                        }
                     }
                 }
-                .padding(.vertical, 30).padding(.horizontal).frame(maxWidth: .infinity).background(GlassCardBackground()).padding(.horizontal, 20)
-                
-                Spacer()
-                
-                if showTimer {
-                    if remainingTime > 0 { Text("\(remainingTime)").font(.system(size: 60, weight: .bold, design: .monospaced)).foregroundColor(remainingTime <= 10 ? .neonMagenta : .starWhite).shadow(color: remainingTime <= 10 ? .neonMagenta : .clear, radius: 10).contentTransition(.numericText()).animation(.spring(), value: remainingTime) }
-                    else { Text("Temps écoulé").font(.system(size: 24, weight: .bold, design: .rounded)).foregroundColor(.neonMagenta) }
-                } else if showChronoButton {
-                    Button("Lancer Chrono") { startTimer() }.font(.system(size: 18, weight: .bold, design: .rounded)).foregroundColor(.starWhite).padding().background(Color.electricCyan).clipShape(Capsule()).shadow(color: .electricCyan.opacity(0.7), radius: 8)
-                }
-                
-                Spacer()
-                
-                if isTrueFalseQuestion && !hasAnsweredTrueFalse {
-                    HStack(spacing: 20) {
-                        actionButton(title: "Vrai", color: .electricCyan, foreground: .deepSpaceBlue) { checkTrueFalseAnswer(userChoiceIsVrai: true) }
-                        actionButton(title: "Faux", color: .neonMagenta) { checkTrueFalseAnswer(userChoiceIsVrai: false) }
-                    }
-                } else {
-                    actionButton(title: shouldRevealAnswer ? "Dévoiler" : (currentQuestionIndex >= totalQuestions ? "Terminer la partie" : "Suivant"), color: shouldRevealAnswer ? .electricCyan : .neonMagenta, foreground: shouldRevealAnswer ? .deepSpaceBlue : .starWhite) {
-                        if shouldRevealAnswer { question = currentAnswer; shouldRevealAnswer = false }
-                        else { nextQuestion() }
-                    }
-                }
+                .padding(.vertical)
             }
-            .padding(.vertical)
+            .navigationBarHidden(true)
+            .alert("Quitter la partie", isPresented: $showQuitAlert) { Button("Oui", role: .destructive) { path = NavigationPath() }; Button("Non", role: .cancel) {} } message: { Text("Êtes-vous sûr de vouloir quitter la partie ?") }
+            .onAppear { generateNewChallenge() }
         }
-        .navigationBarHidden(true)
-        .alert("Quitter la partie", isPresented: $showQuitAlert) { Button("Oui", role: .destructive) { path = NavigationPath() }; Button("Non", role: .cancel) {} } message: { Text("Êtes-vous sûr de vouloir quitter la partie ?") }
-        .onAppear { generateNewChallenge() }
     }
+    
     private func actionButton(title: String, color: Color, foreground: Color = .starWhite, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title).font(.system(size: 22, weight: .bold, design: .rounded)).foregroundColor(foreground)
@@ -206,11 +211,7 @@ struct GameView: View {
         if selectedThemes.contains("Vrai ou Faux") { themeList += [26, 27, 28] }
         
         if gameMode == .classic {
-            let forbiddenTypes: Set<Int> = [
-                12, 13, // oneUnluck
-                14, 15, // Unluck
-                30      // Malediction
-            ]
+            let forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
             themeList = themeList.filter { !forbiddenTypes.contains($0) }
         }
         
