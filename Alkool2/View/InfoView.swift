@@ -33,14 +33,14 @@ struct InfoView: View {
                 .padding(.horizontal)
                 .padding(.top)
 
-                Text("Glou")
+                Text("Glow")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .foregroundColor(.starWhite)
                     .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
                     .padding(.bottom, 20)
                                 
                 VStack(alignment: .leading, spacing: 25) {
-                    Text("Bienvenue dans Glou, le jeu qui illumine vos soirées !")
+                    Text("Bienvenue dans Glow, le jeu qui illumine vos soirées !")
                         .font(.system(size: 18, weight: .medium, design: .rounded))
                         .foregroundColor(.starWhite)
                         .padding(.bottom, 10)

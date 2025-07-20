@@ -22,13 +22,22 @@ struct NumberView: View {
     var players: [Player]
     var selectedThemes: [String]
     
-    private let presets: [GameLengthPreset] = [
+    private let classicPresets: [GameLengthPreset] = [
+        GameLengthPreset(title: "Express", subtitle: "15 Questions", questionCount: 15, iconName: "timer"),
+        GameLengthPreset(title: "Ambiance", subtitle: "30 Questions", questionCount: 30, iconName: "music.mic"),
+        GameLengthPreset(title: "Déjanté", subtitle: "50 Questions", questionCount: 50, iconName: "party.popper.fill"),
+        GameLengthPreset(title: "Survivor", subtitle: "80 Questions", questionCount: 80, iconName: "figure.walk.diamond.fill")
+    ]
+    
+    private let glouPresets: [GameLengthPreset] = [
         GameLengthPreset(title: "Apéro", subtitle: "15 Questions", questionCount: 15, iconName: "sun.min.fill"),
         GameLengthPreset(title: "Soirée", subtitle: "30 Questions", questionCount: 30, iconName: "moon.stars.fill"),
         GameLengthPreset(title: "Marathon", subtitle: "50 Questions", questionCount: 50, iconName: "flame.fill"),
         GameLengthPreset(title: "After", subtitle: "80 Questions", questionCount: 80, iconName: "crown.fill")
     ]
     
+    @State private var gameMode: GameMode = .classic
+    @State private var currentPresets: [GameLengthPreset] = []
     @State private var questionCount: Int = 30
     
     var body: some View {
@@ -53,7 +62,7 @@ struct NumberView: View {
                 }
                 .padding(.horizontal)
                 
-                Text("Glou")
+                Text("Glow")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .foregroundColor(.starWhite)
                     .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
@@ -65,7 +74,7 @@ struct NumberView: View {
                     .multilineTextAlignment(.center)
                 
                 VStack(spacing: 15) {
-                    ForEach(presets) { preset in
+                    ForEach(currentPresets) { preset in
                         Button(action: {
                             withAnimation(.spring()) {
                                 questionCount = preset.questionCount
@@ -130,7 +139,7 @@ struct NumberView: View {
             .padding(.top)
         }
         .navigationBarHidden(true)
-        .onAppear(perform: loadQuestionCount)
+        .onAppear(perform: setupView)
     }
     
     private func saveQuestionCount() {
@@ -139,11 +148,22 @@ struct NumberView: View {
     
     private func loadQuestionCount() {
         let savedCount = UserDefaults.standard.integer(forKey: "savedQuestionCount")
-        if presets.contains(where: { $0.questionCount == savedCount }) {
+        if currentPresets.contains(where: { $0.questionCount == savedCount }) {
             questionCount = savedCount
         } else {
             questionCount = 30
             saveQuestionCount()
         }
     }
+    
+    private func setupView() {
+            if let savedModeRawValue = UserDefaults.standard.string(forKey: "selectedGameMode"),
+               let mode = GameMode(rawValue: savedModeRawValue) {
+                self.gameMode = mode
+            }
+            
+            self.currentPresets = (gameMode == .classic) ? classicPresets : glouPresets
+            
+            loadQuestionCount()
+        }
 }

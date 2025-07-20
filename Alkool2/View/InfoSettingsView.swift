@@ -33,7 +33,7 @@ struct InfoSettingsView: View {
                 .padding(.horizontal)
                 .padding(.top)
 
-                Text("Glou")
+                Text("Glow")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .foregroundColor(.starWhite)
                     .shadow(color: .neonMagenta.opacity(0.8), radius: 10)

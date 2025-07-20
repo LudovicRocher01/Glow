@@ -39,7 +39,7 @@ struct ModeSelectionView: View {
                 
                 Spacer().frame(height: 0)
                 
-                Text("Glou")
+                Text("Glow")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .foregroundColor(.starWhite)
                     .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
@@ -52,7 +52,7 @@ struct ModeSelectionView: View {
                 VStack(spacing: 20) {
                     ModeButton(
                         title: "Mode Classique",
-                        subtitle: "Pour une partie fun, sans conséquences",
+                        subtitle: "Pour une partie sans conséquences",
                         icon: "party.popper.fill", // Icône festive et neutre
                         isSelected: selectedMode == .classic
                     ) {

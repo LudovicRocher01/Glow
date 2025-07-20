@@ -108,8 +108,22 @@ struct GameView: View {
                 VStack(spacing: 20) {
                     Label { Text(theme).font(.system(size: 24, weight: .bold, design: .rounded)) } icon: { Image(systemName: themeIcon).font(.system(size: 24)).symbolEffect(.pulse, options: .repeating) }
                         .foregroundColor(.electricCyan)
-                    ScrollView { Text(question).font(.system(size: 26, weight: .medium, design: .rounded)).foregroundColor(.starWhite).multilineTextAlignment(.center).lineSpacing(5).minimumScaleFactor(0.7).padding(.horizontal, 10) }
-                        .frame(maxHeight: 250)
+                    
+                    ScrollView {
+                        VStack {
+                            Spacer(minLength: 0)
+                            Text(question)
+                                .font(.system(size: 26, weight: .medium, design: .rounded))
+                                .foregroundColor(.starWhite)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(5)
+                                .minimumScaleFactor(0.6)
+                                .padding(.horizontal, 10)
+                            Spacer(minLength: 0)
+                        }
+                        .frame(minHeight: 250)
+                    }
+                    .frame(maxHeight: 250)
                     
                     if gameMode == .glou && !penaltyText.isEmpty {
                         Text(penaltyText)
@@ -150,7 +164,6 @@ struct GameView: View {
         .alert("Quitter la partie", isPresented: $showQuitAlert) { Button("Oui", role: .destructive) { path = NavigationPath() }; Button("Non", role: .cancel) {} } message: { Text("Êtes-vous sûr de vouloir quitter la partie ?") }
         .onAppear { generateNewChallenge() }
     }
-    
     private func actionButton(title: String, color: Color, foreground: Color = .starWhite, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title).font(.system(size: 22, weight: .bold, design: .rounded)).foregroundColor(foreground)
@@ -201,7 +214,6 @@ struct GameView: View {
             themeList = themeList.filter { !forbiddenTypes.contains($0) }
         }
         
-        // Si la liste est vide, on retourne un type de question neutre comme Culture G ou 'Vrai ou Faux'.
         return themeList.isEmpty ? [23, 24, 25, 26, 27, 28] : themeList
     }
 

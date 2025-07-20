@@ -27,86 +27,81 @@ struct SettingsView: View {
     @State private var showThemeAlert = false
 
     var body: some View {
-        GeometryReader { geometry in
-            let isSmall = geometry.size.height < 700
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).ignoresSafeArea()
 
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                ).ignoresSafeArea()
-
-                VStack(spacing: isSmall ? 15 : 20) {
-                    HStack {
-                        Button(action: { dismiss() }) {
-                            Label("Retour", systemImage: "chevron.left")
-                                .font(.system(size: 16, weight: .medium, design: .rounded))
-                                .foregroundColor(.starWhite)
-                                .padding(.horizontal, 16).padding(.vertical, 10)
-                                .background(Color.white.opacity(0.1))
-                                .clipShape(Capsule())
-                        }
-                        Spacer()
-                        
-                        NavigationLink(destination: InfoSettingsView()) {
-                            Image(systemName: "info.circle.fill")
-                                .font(.title)
-                                .foregroundColor(.starWhite.opacity(0.8))
-                        }
-                    }
-                    .padding(.horizontal)
-
-                    Text("Glou")
-                        .font(.system(size: isSmall ? 36 : 40, weight: .bold, design: .rounded))
-                        .foregroundColor(.starWhite)
-                        .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
-                        .padding(.bottom, 5)
-
-                    Text("Choisissez vos thèmes")
-                        .font(.system(size: isSmall ? 20 : 22, weight: .bold, design: .rounded))
-                        .foregroundColor(.starWhite)
-                        .padding(.horizontal, 30)
-
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 140))], spacing: 20) {
-                        ForEach(themes, id: \.0) { theme in
-                            ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0))
-                                .onTapGesture {
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                        toggleSelection(theme.0)
-                                    }
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-
-                    Button(action: {
-                        if selectedThemes.isEmpty {
-                            showThemeAlert = true
-                        } else {
-                            path.append("numberView")
-                        }
-                    }) {
-                        Text("Suivant")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+            VStack(spacing: 20) {
+                HStack {
+                    Button(action: { dismiss() }) {
+                        Label("Retour", systemImage: "chevron.left")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
                             .foregroundColor(.starWhite)
-                            .frame(height: 60)
-                            .frame(maxWidth: .infinity)
-                            .background(Color.neonMagenta)
-                            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                            .shadow(color: .neonMagenta, radius: 8, x: 0, y: 4)
+                            .padding(.horizontal, 16).padding(.vertical, 10)
+                            .background(Color.white.opacity(0.1))
+                            .clipShape(Capsule())
                     }
-                    .padding(.horizontal, 30)
-                    .padding(.bottom, isSmall ? 10 : 20)
-                    .alert("Attention !", isPresented: $showThemeAlert) {
-                        Button("OK", role: .cancel) {}
-                    } message: {
-                        Text("Veuillez sélectionner au moins un thème pour jouer.")
+                    Spacer()
+                    NavigationLink(destination: InfoSettingsView()) {
+                        Image(systemName: "info.circle.fill")
+                            .font(.title)
+                            .foregroundColor(.starWhite.opacity(0.8))
                     }
-
                 }
-                .padding(.top, isSmall ? 10 : 20)
+
+                Text("Glow")
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
+                    .padding(.bottom, 5)
+
+                Text("Choisissez vos thèmes")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundColor(.starWhite)
+                    .padding(.horizontal, 30)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140))], spacing: 20) {
+                    ForEach(themes, id: \.0) { theme in
+                        ThemeCell(themeName: theme.0, iconName: theme.1, isSelected: selectedThemes.contains(theme.0))
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                    toggleSelection(theme.0)
+                                }
+                            }
+                    }
+                }
+                
+                Spacer(minLength: 20)
+
+                Button(action: {
+                    if selectedThemes.isEmpty {
+                        showThemeAlert = true
+                    } else {
+                        saveSelectedThemes()
+                        path.append("numberView")
+                    }
+                }) {
+                    Text("Suivant")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(.starWhite)
+                        .frame(height: 60)
+                        .frame(maxWidth: .infinity)
+                        .background(Color.neonMagenta)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: .neonMagenta, radius: 8, x: 0, y: 4)
+                }
+                .alert("Attention !", isPresented: $showThemeAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text("Veuillez sélectionner au moins un thème pour jouer.")
+                }
+
             }
+            .padding()
+            .frame(maxWidth: 600)
         }
         .navigationBarHidden(true)
         .onAppear {
@@ -120,7 +115,6 @@ struct SettingsView: View {
         } else {
             selectedThemes.insert(theme)
         }
-        saveSelectedThemes()
     }
 
     private func saveSelectedThemes() {
@@ -142,7 +136,6 @@ struct ThemeCell: View {
     let themeName: String
     let iconName: String
     let isSelected: Bool
-    var isSmall: Bool = false
 
     var body: some View {
         VStack(spacing: 8) {

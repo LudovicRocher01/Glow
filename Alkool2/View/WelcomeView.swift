@@ -41,13 +41,13 @@ struct WelcomeView: View {
                 VStack(spacing: 20) {
                     Spacer().frame(height: 10)
 
-                    Text("Glou")
+                    Text("Glow")
                         .font(.system(size: 50, weight: .bold, design: .rounded))
                         .foregroundColor(.starWhite)
                         .shadow(color: .neonMagenta.opacity(0.8), radius: 10, x: 0, y: 0)
                         .shadow(color: .neonMagenta.opacity(0.5), radius: 20, x: 0, y: 0)
 
-                    Text("Ajoutez jusqu'à 12 joueurs")
+                    Text("Ajoutez jusqu'à 12 joueurs :")
                         .font(.headline)
                         .foregroundColor(.lavenderMist)
                     
