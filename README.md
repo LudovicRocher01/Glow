@@ -1,15 +1,15 @@
-# Glou 🍻 – Jeu à boire pour iOS
+# Glow 🍻 – Jeu de soirée pour iOS
 
-**Glou** est une application mobile festive qui pimente vos soirées entre amis à travers des défis, questions et mini-jeux à base d’alcool (ou non 😄).
+**Glow** est une application mobile festive conçue pour animer vos soirées entre amis à travers des défis, des questions et des mini-jeux.
 
 ## 🎯 Fonctionnalités principales
 
-- Plus de **2000 questions et challenges**
-- Plusieurs **thèmes de jeu** disponibles (Je n'ai jamais, Catégorie, Vrai/Faux, etc.)
-- Ajout et gestion des joueurs
-- Sélection du nombre de questions
+- Plus de **2000 questions et challenges** uniques et originaux
+- 8 **thèmes de jeu** variés disponibles (Je n'ai jamais, Catégorie, Vrai/Faux, etc.)
+- Ajout et gestion des joueurs simple (de 2 à 12 joueurs)
+- Durée de partie personnalisable
 - Design intuitif et animations sobres
-- Mode festif mais **responsable** : avertissement dès le lancement
+- 100% gratuit et sans publicité.
 
 ## 📱 Technologies
 
@@ -23,8 +23,7 @@ Aucun setup particulier. Ouvrez le projet dans Xcode et lancez l’application s
 
 ## ⚠️ Responsabilité
 
-L’application contient des références à l’alcool, à la sexualité et à certaines substances.  
-Elle est destinée uniquement à un public adulte (+17 ans) et ne pousse à aucune consommation réelle.
+L'application est destinée à un public de 17 ans et plus en raison de certains thèmes et questions qui peuvent être matures. Elle est conçue pour un divertissement convivial et respectueux.
 
 ---
 
