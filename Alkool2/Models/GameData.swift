@@ -2110,7 +2110,7 @@ struct GameData {
         "Le fer est un bon conducteur d'électricité. (Vrai)",
         "L'ADN humain est organisé en 46 chromosomes. (Vrai)",
         "Les étoiles naissent dans des nébuleuses. (Vrai)",
-        "Le nombre π (pi) est une fraction exacte. (Faux, π a une infinité de décimales)",
+        "Le nombre π/pi est une fraction exacte. (Faux, π a une infinité de décimales)",
         "La molécule d'eau est constituée de deux atomes d'hydrogène et d'un atome d'oxygène. (Vrai)",
         "De nombreux satellites artificiels orbitent autour de la Terre. (Vrai)",
         "La Première Guerre mondiale a débuté en 1914. (Vrai)",

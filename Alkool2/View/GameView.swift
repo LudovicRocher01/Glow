@@ -61,25 +61,14 @@ struct GameView: View {
     
     @State private var currentAnswer: String = ""
     @State private var shouldRevealAnswer: Bool = false
+    @State private var gameMode: String = "Normal"
 
-    private var gameMode: GameMode
-    
-    private var penaltyUnitPlural: String {
-        return gameMode == .glou ? "Glous" : ""
-    }
     
     init(path: Binding<NavigationPath>, players: [Player], selectedThemes: [String], totalQuestions: Int) {
         self._path = path
         self.players = players
         self.selectedThemes = selectedThemes
         self.totalQuestions = totalQuestions
-        
-        if let savedModeRawValue = UserDefaults.standard.string(forKey: "selectedGameMode"),
-           let mode = GameMode(rawValue: savedModeRawValue) {
-            self.gameMode = mode
-        } else {
-            self.gameMode = .classic
-        }
     }
 
     var body: some View {
@@ -127,13 +116,6 @@ struct GameView: View {
                         }
                         .frame(maxHeight: isSmallScreen ? 180 : 250)
                         
-                        if gameMode == .glou && !penaltyText.isEmpty {
-                            Text(penaltyText)
-                                .font(.system(size: 20, weight: .bold, design: .rounded))
-                                .foregroundColor(.neonMagenta).padding(.vertical, 8).padding(.horizontal, 16)
-                                .background(Color.neonMagenta.opacity(0.2)).clipShape(Capsule())
-                                .transition(.opacity.combined(with: .scale))
-                        }
                     }
                     .padding(.vertical, isSmallScreen ? 20 : 30)
                     .padding(.horizontal).frame(maxWidth: .infinity).background(GlassCardBackground()).padding(.horizontal, 20)
@@ -180,16 +162,13 @@ struct GameView: View {
     
     private func checkTrueFalseAnswer(userChoiceIsVrai: Bool) {
         withAnimation {
-            guard let player = currentPlayer else { return }
             let isCorrect = (userChoiceIsVrai == correctAnswerIsVrai)
             var resultMessage: String
             
             if isCorrect {
                 resultMessage = "Bonne réponse !"
-                if gameMode == .glou { resultMessage += " \(player.name), tu distribues 2 \(penaltyUnitPlural)." }
             } else {
                 resultMessage = "Mauvaise réponse !"
-                if gameMode == .glou { resultMessage += " \(player.name), tu prends 2 \(penaltyUnitPlural)." }
             }
             
             if let justif = justification { resultMessage += "\n\n\(justif)" }
@@ -209,11 +188,10 @@ struct GameView: View {
         if selectedThemes.contains("Débats") { themeList += [19, 20] }
         if selectedThemes.contains("Culture G") { themeList += [23, 24, 25] }
         if selectedThemes.contains("Vrai ou Faux") { themeList += [26, 27, 28] }
-        
-        if gameMode == .classic {
+
             let forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
             themeList = themeList.filter { !forbiddenTypes.contains($0) }
-        }
+        
         
         return themeList.isEmpty ? [23, 24, 25, 26, 27, 28] : themeList
     }
@@ -235,19 +213,8 @@ struct GameView: View {
             previousPlayer = randomPlayer
             var secondPlayer: Player? = nil
             var message = ""
-
-            if gameMode == .glou {
-                switch themeType {
-                case 0...2: penaltyText = "10 Glous max"
-                case 3...5, 16, 17, 18: penaltyText = "3 Glous"
-                case 12...13, 14...15: penaltyText = "Glous?"
-                case 30: penaltyText = "1 Glou par erreur"
-                case 23...25, 26...28, 29, 6...8, 9...11, 19...20, 21...22: penaltyText = "2 Glous"
-                default: penaltyText = ""
-                }
-            } else {
-                penaltyText = ""
-            }
+            penaltyText = ""
+            
 
             switch themeType {
             case 0...2:

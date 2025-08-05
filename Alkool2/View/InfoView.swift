@@ -38,30 +38,32 @@ struct InfoView: View {
                     .foregroundColor(.starWhite)
                     .shadow(color: .neonMagenta.opacity(0.8), radius: 10)
                     .padding(.bottom, 20)
-                                
+                
+                Spacer()
+                
                 VStack(alignment: .leading, spacing: 25) {
                     Text("Bienvenue dans Glow, le jeu qui illumine vos soirées !")
                         .font(.system(size: 18, weight: .medium, design: .rounded))
                         .foregroundColor(.starWhite)
                         .padding(.bottom, 10)
 
-                    Text("Comment jouer ?")
+                    Text("Règles du jeu :")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(.electricCyan)
 
                     InfoLabel(
-                        icon: "party.popper.fill",
-                        text: "**Mode Classique :** Le mode par défaut. Suivez simplement les instructions de chaque carte pour une partie amusante, parfaite pour tous les groupes."
+                        icon: "gamecontroller.fill",
+                        text: "Suivez simplement les instructions de chaque carte. Le but est de lancer des conversations, de créer des défis amusants et de partager de bons moments."
                     )
                     
                     InfoLabel(
-                        icon: "wineglass.fill",
-                        text: "**Mode Glou (17+) :** Une version alternative où les perdants reçoivent des gages. Ce mode est optionnel et doit être choisi en connaissance de cause."
+                        icon: "person.3.fill",
+                        text: "Il n'y a ni gagnant, ni perdant ! L'objectif est de s'amuser tous ensemble, dans le respect et la bonne humeur."
                     )
                     
                     InfoLabel(
                         icon: "hand.raised.fill",
-                        text: "Amusez-vous dans le respect et la bonne humeur. Chacun est toujours libre de participer à sa manière."
+                        text: "Soyez créatifs et n'hésitez pas à adapter les règles. Chaque groupe est unique, et votre partie le sera aussi !"
                     )
                 }
                 .padding(.horizontal, 30)

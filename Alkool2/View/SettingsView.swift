@@ -20,7 +20,7 @@ struct SettingsView: View {
         ("Qui pourrait", "questionmark.circle.fill"),
         ("Jeux", "gamecontroller.fill"),
         ("Débats", "bubble.left.and.bubble.right.fill"),
-        ("Autres", "sparkles")
+        ("Confidences", "lock.shield")
     ]
 
     @State private var selectedThemes: Set<String> = Set(UserDefaults.standard.array(forKey: "selectedThemes") as? [String] ?? [])

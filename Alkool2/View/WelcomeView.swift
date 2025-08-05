@@ -121,7 +121,7 @@ struct WelcomeView: View {
 
                     Button(action: {
                         if players.count < 2 { showPlayerAlert = true }
-                        else { path.append("modeSelection") }
+                        else { path.append("settings") }
                     }) {
                         Text("Suivant")
                             .font(.system(size: 22, weight: .bold, design: .rounded))
@@ -139,8 +139,6 @@ struct WelcomeView: View {
 
                     .navigationDestination(for: String.self) { route in
                         switch route {
-                        case "modeSelection":
-                            ModeSelectionView(path: $path)
                         case "settings":
                             SettingsView(path: $path, players: players)
                         case "numberView":

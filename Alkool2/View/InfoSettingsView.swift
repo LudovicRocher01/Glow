@@ -55,8 +55,8 @@ struct InfoSettingsView: View {
                         InfoLabel(icon: "gamecontroller.fill", text: "**Jeux :** Des mini-jeux, des défis et des duels entre joueurs pour pimenter la partie. Que le meilleur gagne !")
                         
                         InfoLabel(icon: "bubble.left.and.bubble.right.fill", text: "**Débats :** Choisissez votre camp entre deux options. Les joueurs dans l'équipe minoritaire perdent.")
-                        
-                        InfoLabel(icon: "sparkles", text: "**Autres :** Un mélange de règles spéciales, de malédictions, de questions personnelles et d'actions de groupe. Attendez-vous à tout !")
+                    
+                        InfoLabel(icon: "lock.shield", text: "**Confidences :** Des questions personnelles et légères pour mieux connaître vos amis. Une bonne occasion de révéler de petits secrets !")
                     }
                 }
                 .padding(.horizontal, 30)
