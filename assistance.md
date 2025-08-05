@@ -9,4 +9,4 @@ Pour toute question, suggestion ou si vous rencontrez un problème technique, ve
 
 Nous nous efforçons de répondre à toutes les demandes dans les plus brefs délais.
 
-Merci de jouer à Glou !
+Merci de jouer à Glow !
