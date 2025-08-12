@@ -1229,7 +1229,7 @@ struct GameData {
     
     static let Game: [String] = [
         "Un joueur fait un geste. Le voisin imite ce geste et en ajoute un. Ainsi de suite jusqu'à ce que quelqu'un se trompe.",
-        "Le jeu de la voiture",
+        "Le jeu de la voiture. 'Vroum' pour passer, 'Hii' pour changer de sens, 'Pimp' pour sauter un joueur. Le premier qui se trompe perd !",
         "'Dans ma valise il y a'",
         "Le jeu des syllabes. Quelqu'un choisit un mot de 4 syllabes et le dit à haute voix. Le prochain joueur doit ajouter un mot avec la dernière syllabe de celui-ci. Le premier qui se trompe perd",
         "Pictionary express. Un joueur doit dessiner un mot et faire deviner aux autres. Le premier qui trouve gagne",
