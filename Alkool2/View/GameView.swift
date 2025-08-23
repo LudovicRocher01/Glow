@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct PlayerDisplayView: View {
     let player: Player
@@ -34,15 +35,15 @@ struct PlayerDisplayView: View {
 struct GameView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var path: NavigationPath
-
+    
     var players: [Player]
     var selectedThemes: [String]
     var totalQuestions: Int
-
+    
     @State private var currentQuestionIndex = 1
     @State private var theme = "Thème"
     @State private var themeIcon = "questionmark"
-    @State private var penaltyText = ""
+    @State private var intensityText = ""
     @State private var question = "Question ici"
     @State private var showQuitAlert = false
     @State private var showTimer = false
@@ -50,6 +51,7 @@ struct GameView: View {
     @State private var timer: Timer?
     @State private var showChronoButton = false
     @State private var previousPlayer: Player? = nil
+    @State private var audioPlayer: AVAudioPlayer?
     
     @State private var currentPlayer: Player? = nil
     @State private var secondPlayerForDisplay: Player? = nil
@@ -62,19 +64,18 @@ struct GameView: View {
     @State private var currentAnswer: String = ""
     @State private var shouldRevealAnswer: Bool = false
     @State private var gameMode: String = "Normal"
-
-    
+        
     init(path: Binding<NavigationPath>, players: [Player], selectedThemes: [String], totalQuestions: Int) {
         self._path = path
         self.players = players
         self.selectedThemes = selectedThemes
         self.totalQuestions = totalQuestions
     }
-
+    
     var body: some View {
         GeometryReader { geometry in
             let isSmallScreen = geometry.size.height < 700
-
+            
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [.deepSpaceBlue, .cosmicPurple]), startPoint: .top, endPoint: .bottom).ignoresSafeArea()
                 
@@ -116,6 +117,13 @@ struct GameView: View {
                         }
                         .frame(maxHeight: isSmallScreen ? 180 : 250)
                         
+                        if !intensityText.isEmpty {
+                            Text(intensityText)
+                                .font(.system(size: 18, weight: .bold, design: .rounded))
+                                .foregroundColor(.neonMagenta).padding(.vertical, 8).padding(.horizontal, 16)
+                                .background(Color.neonMagenta.opacity(0.2)).clipShape(Capsule())
+                                .transition(.opacity.combined(with: .scale))
+                        }
                     }
                     .padding(.vertical, isSmallScreen ? 20 : 30)
                     .padding(.horizontal).frame(maxWidth: .infinity).background(GlassCardBackground()).padding(.horizontal, 20)
@@ -146,8 +154,14 @@ struct GameView: View {
                 .padding(.vertical)
             }
             .navigationBarHidden(true)
-            .alert("Quitter la partie", isPresented: $showQuitAlert) { Button("Oui", role: .destructive) { path = NavigationPath() }; Button("Non", role: .cancel) {} } message: { Text("Êtes-vous sûr de vouloir quitter la partie ?") }
-            .onAppear { generateNewChallenge() }
+            .alert("Quitter la partie", isPresented: $showQuitAlert) { Button("Oui", role: .destructive) {
+                path = NavigationPath()
+            };
+                Button("Non", role: .cancel) {} } message: { Text("Êtes-vous sûr de vouloir quitter la partie ?") }
+            .onAppear {
+                generateNewChallenge()
+                setupAudioPlayer()
+            }
         }
     }
     
@@ -188,14 +202,14 @@ struct GameView: View {
         if selectedThemes.contains("Débats") { themeList += [19, 20] }
         if selectedThemes.contains("Culture G") { themeList += [23, 24, 25] }
         if selectedThemes.contains("Vrai ou Faux") { themeList += [26, 27, 28] }
-
-            let forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
-            themeList = themeList.filter { !forbiddenTypes.contains($0) }
+        
+        let forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
+        themeList = themeList.filter { !forbiddenTypes.contains($0) }
         
         
         return themeList.isEmpty ? [23, 24, 25, 26, 27, 28] : themeList
     }
-
+    
     private func generateNewChallenge() {
         withAnimation(.spring()) {
             timer?.invalidate(); showTimer = false; remainingTime = 30; showChronoButton = false
@@ -203,7 +217,7 @@ struct GameView: View {
             hasAnsweredTrueFalse = false; justification = nil; currentPlayer = nil; secondPlayerForDisplay = nil
         }
         
-        guard !selectedThemes.isEmpty else { theme = "Aucun thème"; penaltyText = ""; question = ""; return }
+        guard !selectedThemes.isEmpty else { theme = "Aucun thème"; intensityText = ""; question = ""; return }
         
         let themeType = getAvailableThemeTypes().randomElement()!
         
@@ -213,56 +227,103 @@ struct GameView: View {
             previousPlayer = randomPlayer
             var secondPlayer: Player? = nil
             var message = ""
-            penaltyText = ""
+            intensityText = ""
             
-
+            
             switch themeType {
             case 0...2:
                 self.currentPlayer = randomPlayer; theme = "Catégorie"; themeIcon = "folder.fill"
+                intensityText = "Intensité : 🌶️?"
                 message = "Tu as 30 secondes pour citer autant \(GameData.categories.randomElement() ?? "") que possible..."; showChronoButton = true
             case 3...5:
-                self.currentPlayer = randomPlayer; theme = "Défi"; themeIcon = "target"; message = "\(GameData.challenges.randomElement()!)"
+                self.currentPlayer = randomPlayer; theme = "Défi"; themeIcon = "target";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "\(GameData.challenges.randomElement()!)"
             case 12...13:
-                self.currentPlayer = randomPlayer; theme = "Action"; themeIcon = "figure.run"; message = "\(GameData.OneUnluck.randomElement()!)"
+                self.currentPlayer = randomPlayer; theme = "Action"; themeIcon = "figure.run";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "\(GameData.OneUnluck.randomElement()!)"
             case 30:
-                self.currentPlayer = randomPlayer; theme = "Malédiction"; themeIcon = "bolt.trianglebadge.exclamationmark"; message = "Jusqu'à la fin de la partie : \(GameData.Malediction.randomElement()!)"
+                self.currentPlayer = randomPlayer; theme = "Malédiction"; themeIcon = "bolt.trianglebadge.exclamationmark";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "Jusqu'à la fin de la partie : \(GameData.Malediction.randomElement()!)"
             case 23...25:
-                self.currentPlayer = randomPlayer; theme = "Culture G"; themeIcon = "book.closed.fill"; let raw = GameData.Culture.randomElement() ?? "?"; let parts = raw.split(separator: "("); message = "\(parts[0].trimmingCharacters(in: .whitespaces))"; if parts.count > 1 { currentAnswer = parts[1].replacingOccurrences(of: ")", with: ""); shouldRevealAnswer = true }
+                self.currentPlayer = randomPlayer; theme = "Culture G"; themeIcon = "book.closed.fill"; let raw = GameData.Culture.randomElement() ?? "?"; let parts = raw.split(separator: "(");
+                intensityText = "Intensité : 🌶️🌶️"
+                message = "\(parts[0].trimmingCharacters(in: .whitespaces))"; if parts.count > 1 { currentAnswer = parts[1].replacingOccurrences(of: ")", with: ""); shouldRevealAnswer = true }
             case 26...28:
-                self.currentPlayer = randomPlayer; theme = "Vrai ou Faux"; themeIcon = "checkmark.circle"; let raw = GameData.TrueOrFalse.randomElement() ?? "?"; let parts = raw.split(separator: "(", maxSplits: 1); message = "\(parts[0].trimmingCharacters(in: .whitespaces))"; isTrueFalseQuestion = true; if parts.count > 1 { let answerContent = String(parts[1].dropLast()); let answerParts = answerContent.split(separator: ",", maxSplits: 1); self.correctAnswerIsVrai = (String(answerParts[0]).trimmingCharacters(in: .whitespaces).lowercased() == "vrai"); if answerParts.count > 1 { self.justification = String(answerParts[1]).trimmingCharacters(in: .whitespaces) } }
+                self.currentPlayer = randomPlayer; theme = "Vrai ou Faux"; themeIcon = "checkmark.circle"; let raw = GameData.TrueOrFalse.randomElement() ?? "?"; let parts = raw.split(separator: "(", maxSplits: 1);
+                intensityText = "Intensité : 🌶️🌶️"
+                message = "\(parts[0].trimmingCharacters(in: .whitespaces))"; isTrueFalseQuestion = true; if parts.count > 1 { let answerContent = String(parts[1].dropLast()); let answerParts = answerContent.split(separator: ",", maxSplits: 1); self.correctAnswerIsVrai = (String(answerParts[0]).trimmingCharacters(in: .whitespaces).lowercased() == "vrai"); if answerParts.count > 1 { self.justification = String(answerParts[1]).trimmingCharacters(in: .whitespaces) } }
             case 16, 29:
                 if players.count < 2 { generateNewChallenge(); return }
                 secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
-                if let sp = secondPlayer { self.currentPlayer = randomPlayer; self.secondPlayerForDisplay = sp; if themeType == 16 { theme = "Versus"; themeIcon = "flag.checkered"; message = "\(GameData.Versus.randomElement()!)" } else { theme = "Confidences"; themeIcon = "lock.shield"; message = "\(randomPlayer.name), concernant \(sp.name) : \(GameData.Confidence.randomElement()!)" } }
+                if let sp = secondPlayer { self.currentPlayer = randomPlayer; self.secondPlayerForDisplay = sp; if themeType == 16 { theme = "Versus"; themeIcon = "flag.checkered";
+                    intensityText = "Intensité : 🌶️🌶️"
+                    message = "\(GameData.Versus.randomElement()!)" } else { theme = "Confidences"; themeIcon = "lock.shield"; message = "\(randomPlayer.name), concernant \(sp.name) : \(GameData.Confidence.randomElement()!)" } }
             case 6...8:
-                theme = "Je n'ai jamais"; themeIcon = "hand.raised.fill"; message = GameData.NeverHave.randomElement()!
+                theme = "Je n'ai jamais"; themeIcon = "hand.raised.fill";
+                intensityText = "Intensité : 🌶️"
+                message = GameData.NeverHave.randomElement()!
             case 9...11:
-                theme = "Qui pourrait"; themeIcon = "person.crop.circle.badge.questionmark"; message = "\(GameData.Who.randomElement()!) ?"
+                theme = "Qui pourrait"; themeIcon = "person.crop.circle.badge.questionmark";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "\(GameData.Who.randomElement()!) ?"
             case 14...15:
-                theme = "Action Groupe"; themeIcon = "person.3.fill"; message = GameData.Unluck.randomElement()!
+                theme = "Action Groupe"; themeIcon = "person.3.fill";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = GameData.Unluck.randomElement()!
             case 17...18:
-                self.currentPlayer = randomPlayer; theme = "Jeu"; themeIcon = "gamecontroller.fill"; message = "\(GameData.Game.randomElement()!). \(randomPlayer.name), à toi l'honneur !"
+                self.currentPlayer = randomPlayer; theme = "Jeu"; themeIcon = "gamecontroller.fill";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "\(GameData.Game.randomElement()!). \(randomPlayer.name), à toi l'honneur !"
             case 19...20:
-                theme = "Débat"; themeIcon = "quote.bubble.fill"; message = GameData.Debate.randomElement()!
+                theme = "Débat"; themeIcon = "quote.bubble.fill";
+                intensityText = "Intensité : 🌶️"
+                message = GameData.Debate.randomElement()!
             case 21...22:
-                self.currentPlayer = randomPlayer; theme = "Catégorie"; themeIcon = "list.bullet.rectangle"; message = "Chacun son tour, citez \(GameData.RoundCategories.randomElement()!). Celui qui se trompe ou hésite trop perd. \(randomPlayer.name), tu commences !"
+                self.currentPlayer = randomPlayer; theme = "Catégorie"; themeIcon = "list.bullet.rectangle";
+                intensityText = "Intensité : 🌶️🌶️🌶️"
+                message = "Chacun son tour, citez \(GameData.RoundCategories.randomElement()!). Celui qui se trompe ou hésite trop perd. \(randomPlayer.name), tu commences !"
             default:
                 theme = "Erreur"; themeIcon = "xmark.octagon.fill"; message = "Une erreur est survenue."
             }
             if message.isEmpty { generateNewChallenge() } else { question = message }
         }
     }
-
+    
     private func nextQuestion() {
         if currentQuestionIndex < totalQuestions { currentQuestionIndex += 1; generateNewChallenge() }
         else { path.append("endGame") }
     }
-
+    
     private func startTimer() {
-        showTimer = true; remainingTime = 30; timer?.invalidate()
+        showTimer = true
+        remainingTime = 30
+        timer?.invalidate()
+        
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if self.remainingTime > 0 { self.remainingTime -= 1 }
-            else { self.timer?.invalidate() }
+            if self.remainingTime > 1 {
+                self.remainingTime -= 1
+            } else {
+                self.remainingTime = 0
+                self.audioPlayer?.play()
+                self.timer?.invalidate()
+            }
+        }
+    }
+    
+    private func setupAudioPlayer() {
+        guard let soundURL = Bundle.main.url(forResource: "timer_alarm", withExtension: "mp3") else {
+            print("Fichier son non trouvé.")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            audioPlayer?.prepareToPlay()
+        } catch {
+            print("Erreur lors de l'initialisation de l'audio player: \(error.localizedDescription)")
         }
     }
 }
