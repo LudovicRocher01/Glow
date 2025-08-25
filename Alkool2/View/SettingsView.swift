@@ -20,10 +20,10 @@ struct SettingsView: View {
         ("Qui pourrait", "questionmark.circle.fill"),
         ("Jeux", "gamecontroller.fill"),
         ("Débats", "bubble.left.and.bubble.right.fill"),
-        ("Confidences", "lock.shield")
+        ("Aléas", "questionmark.circle.fill")
     ]
 
-    @State private var selectedThemes: Set<String> = Set(UserDefaults.standard.array(forKey: "selectedThemes") as? [String] ?? [])
+    @State private var selectedThemes: Set<String> = Set()
     @State private var showThemeAlert = false
 
     var body: some View {
@@ -86,7 +86,6 @@ struct SettingsView: View {
                         if selectedThemes.isEmpty {
                             showThemeAlert = true
                         } else {
-                            saveSelectedThemes()
                             path.append("numberView")
                         }
                     }) {
@@ -123,6 +122,7 @@ struct SettingsView: View {
         } else {
             selectedThemes.insert(theme)
         }
+        saveSelectedThemes()
     }
 
     private func saveSelectedThemes() {
@@ -130,15 +130,15 @@ struct SettingsView: View {
     }
 
     private func loadSelectedThemes() {
-        if let saved = UserDefaults.standard.array(forKey: "selectedThemes") as? [String], !saved.isEmpty {
-            selectedThemes = Set(saved)
-        } else {
+        if !UserDefaults.standard.bool(forKey: "hasSetInitialThemes") {
             selectedThemes = Set(themes.map { $0.0 })
             saveSelectedThemes()
+            UserDefaults.standard.set(true, forKey: "hasSetInitialThemes")
+        } else {
+            selectedThemes = Set(UserDefaults.standard.array(forKey: "selectedThemes") as? [String] ?? [])
         }
     }
 }
-
 
 struct ThemeCell: View {
     let themeName: String

@@ -195,7 +195,7 @@ struct GameView: View {
         var themeList = [Int]()
         
         if selectedThemes.contains("Catégorie") { themeList += [0, 1, 2, 21, 22] }
-        if selectedThemes.contains("Autres") { themeList += [12, 13, 14, 15, 29, 30] }
+        if selectedThemes.contains("Aléas") { themeList += [12, 13, 14, 15, 29, 30] }
         if selectedThemes.contains("Je n'ai jamais") { themeList += [6, 7, 8] }
         if selectedThemes.contains("Qui pourrait") { themeList += [9, 10, 11] }
         if selectedThemes.contains("Jeux") { themeList += [3, 4, 5, 16, 17, 18] }
@@ -203,8 +203,8 @@ struct GameView: View {
         if selectedThemes.contains("Culture G") { themeList += [23, 24, 25] }
         if selectedThemes.contains("Vrai ou Faux") { themeList += [26, 27, 28] }
         
-        let forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
-        themeList = themeList.filter { !forbiddenTypes.contains($0) }
+        // forbiddenTypes: Set<Int> = [12, 13, 14, 15, 30]
+        //themeList = themeList.filter { !forbiddenTypes.contains($0) }
         
         
         return themeList.isEmpty ? [23, 24, 25, 26, 27, 28] : themeList
@@ -241,12 +241,12 @@ struct GameView: View {
                 message = "\(GameData.challenges.randomElement()!)"
             case 12...13:
                 self.currentPlayer = randomPlayer; theme = "Action"; themeIcon = "figure.run";
-                intensityText = "Intensité : 🌶️🌶️🌶️"
+                intensityText = "Intensité : 💀"
                 message = "\(GameData.OneUnluck.randomElement()!)"
             case 30:
                 self.currentPlayer = randomPlayer; theme = "Malédiction"; themeIcon = "bolt.trianglebadge.exclamationmark";
-                intensityText = "Intensité : 🌶️🌶️🌶️"
-                message = "Jusqu'à la fin de la partie : \(GameData.Malediction.randomElement()!)"
+                intensityText = "Intensité : ☠️"
+                message = "Jusqu'à la fin de la partie (1 Glow par erreur) : \(GameData.Malediction.randomElement()!)"
             case 23...25:
                 self.currentPlayer = randomPlayer; theme = "Culture G"; themeIcon = "book.closed.fill"; let raw = GameData.Culture.randomElement() ?? "?"; let parts = raw.split(separator: "(");
                 intensityText = "Intensité : 🌶️🌶️"
@@ -256,10 +256,10 @@ struct GameView: View {
                 intensityText = "Intensité : 🌶️🌶️"
                 message = "\(parts[0].trimmingCharacters(in: .whitespaces))"; isTrueFalseQuestion = true; if parts.count > 1 { let answerContent = String(parts[1].dropLast()); let answerParts = answerContent.split(separator: ",", maxSplits: 1); self.correctAnswerIsVrai = (String(answerParts[0]).trimmingCharacters(in: .whitespaces).lowercased() == "vrai"); if answerParts.count > 1 { self.justification = String(answerParts[1]).trimmingCharacters(in: .whitespaces) } }
             case 16, 29:
+                intensityText = "Intensité : 🌶️🌶️"
                 if players.count < 2 { generateNewChallenge(); return }
                 secondPlayer = players.filter { $0.id != randomPlayer.id }.randomElement()
                 if let sp = secondPlayer { self.currentPlayer = randomPlayer; self.secondPlayerForDisplay = sp; if themeType == 16 { theme = "Versus"; themeIcon = "flag.checkered";
-                    intensityText = "Intensité : 🌶️🌶️"
                     message = "\(GameData.Versus.randomElement()!)" } else { theme = "Confidences"; themeIcon = "lock.shield"; message = "\(randomPlayer.name), concernant \(sp.name) : \(GameData.Confidence.randomElement()!)" } }
             case 6...8:
                 theme = "Je n'ai jamais"; themeIcon = "hand.raised.fill";
@@ -271,12 +271,12 @@ struct GameView: View {
                 message = "\(GameData.Who.randomElement()!) ?"
             case 14...15:
                 theme = "Action Groupe"; themeIcon = "person.3.fill";
-                intensityText = "Intensité : 🌶️🌶️🌶️"
+                intensityText = "Intensité : 💀"
                 message = GameData.Unluck.randomElement()!
             case 17...18:
                 self.currentPlayer = randomPlayer; theme = "Jeu"; themeIcon = "gamecontroller.fill";
                 intensityText = "Intensité : 🌶️🌶️🌶️"
-                message = "\(GameData.Game.randomElement()!). \(randomPlayer.name), à toi l'honneur !"
+                message = "\(GameData.Game.randomElement()!)."
             case 19...20:
                 theme = "Débat"; themeIcon = "quote.bubble.fill";
                 intensityText = "Intensité : 🌶️"

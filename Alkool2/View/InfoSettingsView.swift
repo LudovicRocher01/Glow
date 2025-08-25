@@ -56,7 +56,7 @@ struct InfoSettingsView: View {
                         
                         InfoLabel(icon: "bubble.left.and.bubble.right.fill", text: "**Débats :** Choisissez votre camp entre deux options. Les joueurs dans l'équipe minoritaire perdent.")
                     
-                        InfoLabel(icon: "lock.shield", text: "**Confidences :** Des questions personnelles et légères pour mieux connaître vos amis. Une bonne occasion de révéler de petits secrets !")
+                        InfoLabel(icon: "questionmark.circle.fill", text: "**Aléas :** Tu ne sais pas à quoi t’attendre. Actions, confidences et malédictions se cachent ici.")
                     }
                 }
                 .padding(.horizontal, 30)
