@@ -70,7 +70,7 @@ struct InfoView: View {
 
                 Spacer()
 
-                Text("v 1.3.0")
+                Text("v 1.3.1")
                     .font(.footnote)
                     .foregroundColor(.starWhite.opacity(0.6))
                     .padding(.bottom, 10)
