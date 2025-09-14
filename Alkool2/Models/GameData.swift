@@ -148,7 +148,6 @@ struct GameData {
         "de sports pratiqués sur glace",
         "de saveurs de yaourt",
         "de noms de fromages italiens",
-        "de célébrités connues par un seul prénom",
         "de choses associées à Noël",
         "de choses associées à Halloween",
         "de moyens de communication anciens",
@@ -166,7 +165,6 @@ struct GameData {
     ]
     
     static let challenges: [String] = [
-        "Fais une imitation d'un animal, les autres doivent deviner lequel.",
         "Danse sur place pendant 20 secondes.",
         "Chante une chanson en remplaçant les paroles par 'meow meow meow'.",
         "Récite l’alphabet à l’envers.",
@@ -459,7 +457,7 @@ struct GameData {
         "fait l’amour dans une tente",
         "utilisé un vibromasseur",
         "fantasmé sur un(e) voisin(e)",
-        "fait l’amour dans une salle de bain publique",
+        "fait l’amour dans une salle de bain",
         "fait une position que je trouvais ridicule",
         "eu une aventure avec quelqu'un en couple",
         "été attaché(e) au lit",
@@ -1082,7 +1080,8 @@ struct GameData {
         "Tout le monde trinque puis prend un Glow",
         "Tout le monde se tape dans les mains puis prend un Glow",
         "Tout le monde dab puis prend 2 Glow",
-        "Le joueur qui a le plus grand verre distribue 3 Glow.",
+        "Le joueur qui a le verre le pus remplie prend 3 Glow.",
+        "Le joueur qui a le verre le moins remplie distribue 3 Glow.",
         "La personne avec le fond d'écran le plus bizarre doit prendre 3 Glow",
         "Tous ceux qui ont plus de 1000 photos dans leur téléphone prennent 3 Glow",
         "Tous ceux qui sont en couple prennent 2 Glow, les célibataires distribuent 2 Glow",
@@ -1248,6 +1247,7 @@ struct GameData {
         "Le jeu des animaux en chaîne : cite un animal commençant par la dernière lettre du précédent. Celui/Celle qui bloque perd",
         "Le jeu des synonymes : donne un mot, le suivant doit donner un synonyme différent. Celui/Celle qui bloque perd",
         "Jeu du portrait chinois : choisis secrètement quelqu'un du groupe et décris-le indirectement (si c’était un animal, une couleur…). Le premier à trouver la bonne personne gagne",
+        "Fais une imitation d'un animal, les autres doivent deviner lequel. Celui qui trouve gagne. Si personne ne trouve, tu perds.",
     ]
     
     static let Malediction: [String] = [
@@ -1487,7 +1487,6 @@ struct GameData {
         "Être le/la premier(e) à envoyer un sexto ou attendre de recevoir",
         "Utiliser des sextoys discrets ou très visibles",
         "Préférer une lumière tamisée ou totalement sombre",
-        "Faire l’amour après une longue séparation ou très régulièrement",
         "Avoir des préliminaires courts mais intenses ou très longs mais doux",
         "Expérience sexuelle dans un lieu très improbable ou très classique",
         "Faire l’amour avec quelqu’un rencontré récemment ou avec quelqu’un connu depuis longtemps",
@@ -1693,7 +1692,6 @@ struct GameData {
         "Quelle est la capitale de l’Égypte ? (Le Caire)",
         "Quelle est la capitale de la Suisse ? (Berne)",
         "Quel pays d'Asie possède le plus grand nombre de langues officielles ? (L'Inde)",
-        "Quel est le plus grand lac salé du monde ? (La mer Caspienne)",
         "Quelle ville est surnommée la 'Venise du Nord' ? (Amsterdam)",
         "Quel pays compte le plus de langues différentes ? (La Papouasie-Nouvelle-Guinée)",
         "Quel pays a la plus grande densité de population ? (Monaco)",
@@ -1898,7 +1896,6 @@ struct GameData {
         "Quel chanteur britannique a connu le succès avec le tube 'Angels' ? (Robbie Williams)",
         "Quel groupe a popularisé le mouvement grunge avec le hit 'Smells Like Teen Spirit' ? (Nirvana)",
         "Quel instrument de percussion traditionnel africain est souvent utilisé dans la musique du continent ? (Le djembé)",
-        "Quel instrument à cordes est indispensable dans un orchestre symphonique ? (Le violon)",
         "Quel genre musical se caractérise par ses riffs de guitare et ses solos électriques ? (Le rock)",
         
         // Sport

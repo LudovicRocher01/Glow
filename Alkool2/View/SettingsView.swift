@@ -52,7 +52,7 @@ struct SettingsView: View {
                         NavigationLink(destination: InfoSettingsView()) {
                             Image(systemName: "info.circle.fill")
                                 .font(.title)
-                                .foregroundColor(.starWhite.opacity(0.8))
+                                .foregroundColor(.electricCyan)
                         }
                     }
                     .padding(.horizontal)

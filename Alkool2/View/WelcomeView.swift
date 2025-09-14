@@ -162,7 +162,7 @@ struct WelcomeView: View {
 
                 NavigationLink(destination: InfoView()) {
                     Image(systemName: "info.circle.fill")
-                        .font(.title).foregroundColor(.starWhite.opacity(0.8)).padding()
+                        .font(.title).foregroundColor(.electricCyan).padding()
                 }
             }
         }
